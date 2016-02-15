@@ -14,7 +14,6 @@ class Build(object):
 		self._version = parts[-2]
 		self._name = "-".join(parts[:-2])
 
-		# TODO(jchaloup): parse tag from release
 		parts = self._release.split(".")
 		if len(parts) < 2:
 			raise ValueError("Invalid build nvr: %s" % self.build)
