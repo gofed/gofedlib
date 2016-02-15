@@ -14,6 +14,11 @@ TYPE_MAP = "map"
 TYPE_CHANNEL = "channel"
 TYPE_PARENTHESIS = "parenthesis"
 
+def apidiff(api1, api2):
+	obj = GoApiDiff(api1, api2)
+	obj.runDiff()
+	return obj.getProjectsApiDiff()
+
 class GoApiDiff(object):
 	"""
 	Input:
