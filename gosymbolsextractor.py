@@ -10,12 +10,12 @@ DATA_PROJECT = "project"
 DATA_COMMIT = "commit"
 DATA_IPPREFIX = "ipprefix"
 
-def api(self, source_code_directory, skipped_directories = []):
+def api(source_code_directory, skipped_directories = []):
 	obj = GoSymbolsExtractor(source_code_directory, skipped_directories)
 	obj.extract()
 	return obj.getProjectExportedAPI()
 
-def project_packages(self, source_code_directory, skipped_directories = []):
+def project_packages(source_code_directory, skipped_directories = []):
 	obj = GoSymbolsExtractor(source_code_directory, skipped_directories)
 	obj.extract()
 	return obj.getProjectPackages()
