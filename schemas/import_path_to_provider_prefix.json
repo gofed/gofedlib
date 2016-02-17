@@ -1,0 +1,38 @@
+{
+        "schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Import path to provider prefix mapping",
+        "description": "Import path prefix to provider prefix mapping",
+        "type": "object",
+        "properties": {
+                "product": {
+                        "description": "Product name",
+                        "type": "string"
+                },
+                "distribution": {
+                        "description": "Distribution name",
+                        "type" : "string"
+                },
+		"mapping": {
+			"description": "Distribution mapping",
+			"type": "array",
+			"items": {
+				"description": "Assignment"
+				"type": "object",
+				"properties": {
+					"ipprefix": {
+						"description": "Import path prefix",
+						"type": "string",
+						"minLength": 1
+					},
+					"provider_prefix": {
+						"description": "Provider prefix",
+						"type": "string",
+						"minLength": 1
+					}
+				},
+				"requires": ["ipprefix", "provider_prefix"]
+			},
+			"uniqueItems": true
+		}
+	}
+}

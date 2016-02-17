@@ -1,0 +1,22 @@
+{
+        "schema": "http://json-schema.org/draft-04/schema#",
+        "title": "List of native golang importable packages",
+        "description": "List of native golang importable packages",
+	"type": "object",
+	"properties": {
+		"version": {
+			"description": "Go compiler version",
+			"type": "string",
+			"minLength": 1
+		},
+		"packages": {
+		        "type": "array",
+			"items": {
+				"description": "native import",
+				"type": "string",
+				"minLength": 1
+			},
+			"uniqueItems": true
+		}
+	}
+}
