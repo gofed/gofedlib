@@ -85,11 +85,25 @@ class GoSymbolsExtractor(object):
 		package_imports = []
 		for key in self.package_imports:
 			path = str(key.split(":")[0])
+			qualifier = str(key.split(":")[1])
 			arr = sorted(map(lambda i: str(i), self.package_imports[key]))
+
+			deps = []
+			for dep in arr:
+				files = filter(lambda l: os.path.dirname(l) == path, self.package_imports_occurence[dep])
+				files = map(lambda l: os.path.basename(l.split(":")[0]), files)
+				# filter out all test files
+				files = filter(lambda l: not l.endswith("_test.go"), files)
+				dep_obj = {
+					"name": dep,
+					"location": files
+				}
+				deps.append(dep_obj)
 
 			pkg_obj =  {
 				"package": path,
-				"dependencies": arr
+				"dependencies": deps,
+				"qualifier": qualifier
 			}
 			package_imports.append(pkg_obj)
 
