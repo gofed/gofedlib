@@ -15,8 +15,8 @@ def api(source_code_directory, skipped_directories = []):
 	obj.extract()
 	return obj.getProjectExportedAPI()
 
-def project_packages(source_code_directory, skipped_directories = []):
-	obj = GoSymbolsExtractor(source_code_directory, skipped_directories)
+def project_packages(source_code_directory, ipprefix, skipped_directories = []):
+	obj = GoSymbolsExtractor(source_code_directory, skipped_directories, ipprefix)
 	obj.extract()
 	return obj.getProjectPackages()
 
@@ -38,12 +38,14 @@ class GoSymbolsExtractor(object):
 	 To make the class config indepenent, all flags
 	 are passed via class methods.
 	"""
-	def __init__(self, source_code_directory, skipped_directories = [], verbose = False, skip_errors = False):
+	def __init__(self, source_code_directory, skipped_directories = [], ipprefix = ".", verbose = False, skip_errors = False):
 		"""Neco
 		:param source_code_directory:	source code directory
 		:type  source_code_directory:	str
 		:param skipped_directories:	directories to skip
 		:type  skipped_directories:	[str]
+		:param ipprefix:	import path prefix
+		:type  ipprefix:	str
 		:param verbose:			verbose mode
 		:type  verbose:			bool
 		:param skip_errors:		error skipping
@@ -77,6 +79,13 @@ class GoSymbolsExtractor(object):
 		self.input_validated = False
 		self.directory = source_code_directory
 		self.noGodeps = skipped_directories
+		self.ipprefix = ipprefix
+
+	def _filterDeps(self, filepath, packagepath):
+		if packagepath != ".":
+			return os.path.dirname(filepath) == packagepath
+
+		return os.path.dirname(filepath) == ""
 
 	def getProjectPackages(self):
 		data = {}
@@ -90,10 +99,14 @@ class GoSymbolsExtractor(object):
 
 			deps = []
 			for dep in arr:
-				files = filter(lambda l: os.path.dirname(l) == path, self.package_imports_occurence[dep])
+				files = filter(lambda l: self._filterDeps(l, path), self.package_imports_occurence[dep])
 				files = map(lambda l: os.path.basename(l.split(":")[0]), files)
 				# filter out all test files
 				files = filter(lambda l: not l.endswith("_test.go"), files)
+
+				if files == []:
+					continue
+
 				dep_obj = {
 					"name": dep,
 					"location": files
