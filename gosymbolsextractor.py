@@ -367,10 +367,6 @@ class GoSymbolsExtractor(object):
 
 					return False
 
-				# convention is to have dirname = packagename, but not necesary
-				if pname != os.path.basename(dir_info['dir']):
-					logging.warning("directory %s != package name %s" % (dir_info['dir'], pname))
-
 				pkg_name = pname
 
 				# build can contain two different prefixes
