@@ -100,6 +100,9 @@ class GoSymbolsExtractor(object):
 			deps = []
 			for dep in arr:
 				files = filter(lambda l: self._filterDeps(l, path), self.package_imports_occurence[dep])
+				# filter out deps of main packages
+				files = filter(lambda l: l.split(":")[1] != "main", files)
+
 				files = map(lambda l: os.path.basename(l.split(":")[0]), files)
 				# filter out all test files
 				files = filter(lambda l: not l.endswith("_test.go"), files)
