@@ -1,5 +1,3 @@
-from gofed_lib.importpathparserbuilder import ImportPathParserBuilder
-
 class ImportPathsDecomposer:
 
 	def __init__(self, ipparser):

@@ -1,0 +1,2 @@
+class CommitNotRetrieved(Exception):
+	pass
