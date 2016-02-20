@@ -1,4 +1,5 @@
 import re
+from types import UnsupportedImportPathError
 
 UNKNOWN = 0
 GITHUB = 1
@@ -38,6 +39,7 @@ class ImportPathParser(object):
 		self.repository = ""
 		self.prefix = ""
 		self.native = False
+		self.import_path_prefix = ""
 
 	def getProvider(self):
 		return self.provider
@@ -57,8 +59,29 @@ class ImportPathParser(object):
 	def getProviderName(self):
 		return self.provider_name
 
+	def getImportPathPrefix(self):
+		return self.import_path_prefix
+
 	def isNative(self):
 		return self.native
+
+	def _parsePrefix(self, url):
+		repo = self.detectKnownRepo(url)
+
+		if repo == GITHUB:
+			return self.parseGithubImportPath(url)
+		if repo == GOOGLECODE:
+			return self.parseGooglecodeImportPath(url)
+		if repo == BITBUCKET:
+			return self.parseBitbucketImportPath(url)
+		if repo == GOPKG:
+			return self.parseGopkgImportPath(url)
+		if repo == GOOGLEGOLANGORG:
+			return self.parseGooglegolangImportPath(url)
+		if repo == GOLANGORG:
+			return self.parseGolangorgImportPath(url)
+
+		raise UnsupportedImportPathError("Import path %s not supported" % url)
 
 	def parse(self, importpath):
 		""" Parse import path into provider, project, repository
@@ -77,43 +100,30 @@ class ImportPathParser(object):
 		# is import path native package?
 		if importpath.split('/')[0] in self.native_packages:
 			self.native = True
-			return
+			return self
+
+		# parse original import path
+		info = self._parsePrefix(url)
+		self.import_path_prefix = info["provider_prefix"]
 
 		custom_ip = self.detectCustomImportPaths(url)
 		if custom_ip != {}:
 			url = custom_ip["provider_prefix"]
 
-		repo = self.detectKnownRepo(url)
-
-		if repo == GITHUB:
-			info = self.parseGithubImportPath(url)
-			self.provider_name = "github"
-		elif repo == GOOGLECODE:
-			info = self.parseGooglecodeImportPath(url)
-			self.provider_name = "googlecode"
-		elif repo == BITBUCKET:
-			info = self.parseBitbucketImportPath(url)
-			self.provider_name = "bitbucket"
-		elif repo == GOPKG:
-			info = self.parseGopkgImportPath(url)
-			self.provider_name = "gopkg"
-		elif repo == GOOGLEGOLANGORG:
-			info = self.parseGooglegolangImportPath(url)
-			self.provider_name = "googlegolangorg"
-		elif repo == GOLANGORG:
-			info = self.parseGolangorgImportPath(url)
-			self.provider_name = "golangorg"
-		else:
-			raise ValueError("Import path %s not supported" % url)
+		info = self._parsePrefix(url)
 
 		self.provider = info["provider"]
 		self.project = info["project"]
 		self.repository = info["repo"]
 		self.provider_prefix = info["provider_prefix"]
+		self.provider_name = info["provider_name"]
+
 		if custom_ip != {}:
 			self.prefix = custom_ip["prefix"]
 		else:
 			self.prefix = info["prefix"]
+
+		return self
 
 	def detectKnownRepo(self, url):
 		"""
@@ -149,6 +159,7 @@ class ImportPathParser(object):
 		repo["repo"] = parts[2]
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "github.com/%s/%s" % (parts[1], parts[2])
+		repo["provider_name"] = "github"
 
 		return repo
 
@@ -167,6 +178,7 @@ class ImportPathParser(object):
 		repo["repo"] = parts[2]
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "code.google.com/p/%s" % (parts[2])
+		repo["provider_name"] = "googlecode"
 
 		return repo
 
@@ -185,6 +197,7 @@ class ImportPathParser(object):
 		repo["repo"] = parts[2]
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "bitbucket.org/%s/%s" % (parts[1], parts[2])
+		repo["provider_name"] = "bitbucket"
 
 		return repo
 
@@ -218,6 +231,7 @@ class ImportPathParser(object):
 		repo["repo"] = repository
 		repo["prefix"] = prefix
 		repo["provider_prefix"] = provider_prefix
+		repo["provider_name"] = "gopkg"
 
 		return repo
 
@@ -236,6 +250,7 @@ class ImportPathParser(object):
 		repo["repo"] = parts[1]
 		repo["prefix"] = "/".join(parts[:2])
 		repo["provider_prefix"] = "google.golang.org/%s" % (parts[1])
+		repo["provider_name"] = "googlegolangorg"
 
 		return repo
 
@@ -254,6 +269,7 @@ class ImportPathParser(object):
 		repo["repo"] = parts[2]
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "golang.org/x/%s" % (parts[2])
+		repo["provider_name"] = "golangorg"
 
 		return repo
 
