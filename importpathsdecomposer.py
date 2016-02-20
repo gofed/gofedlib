@@ -9,6 +9,7 @@ class ImportPathsDecomposer:
 		return self.classes
 
 	def decompose(self, importpaths):
+		self.classes = {}
 		for path in importpaths:
 			try:
 				self.ipparser.parse(path)
