@@ -579,8 +579,13 @@ class GoTypeCoder:
 		# }
 		channel_obj = {}
 		channel_obj["type"] = "channel"
-		channel_obj["dir"] = type["dir"]
-		channel_obj["value"] = self._type_to_json(type["value"])
+
+		if "def" in type:
+			channel_obj["dir"] = type["def"]["dir"]
+			channel_obj["value"] = self._type_to_json(type["def"]["value"])
+		else:
+			channel_obj["dir"] = type["dir"]
+			channel_obj["value"] = self._type_to_json(type["value"])
 
 		return channel_obj
 
