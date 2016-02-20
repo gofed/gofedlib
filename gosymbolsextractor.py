@@ -396,6 +396,10 @@ class GoSymbolsExtractor(object):
 			test_directory_dependencies[test_key] = sorted(set(test_directory_dependencies[test_key]))
 
 
+		# unique package_imports_occurence
+		for path in self.package_imports_occurence:
+			self.package_imports_occurence[path] = list(set(self.package_imports_occurence[path]))
+
 		self.symbols = go_packages
 		self.symbols_position = ip_packages
 		self.package_imports = package_imports
