@@ -1,0 +1,142 @@
+{
+        "schema": "http://json-schema.org/draft-04/schema#",
+        "title": "List of native golang importable packages",
+        "description": "List of native golang importable packages",
+	"type": "object",
+	"properties": {
+		"metadata": {
+			"type": "array",
+			"description": "Metadata about golang project",
+			"items": {
+				"type": "object",
+				"description": "Metadata",
+				"properties": {
+					"key": {
+						"type": "string",
+						"description": "Key",
+						"minLength": 1
+					},
+					"value": {
+						"type": "string",
+						"description": "Value",
+						"minLength": 1
+					}
+				},
+				"required": ["key", "value"]
+			},
+			"uniqueItems": true
+		},
+		"data": {
+			"type": "object",
+			"description": "Spec model data",
+			"properties": {
+				"packages": {
+					"type": "array",
+					"description": "Defined devel packages",
+					"items": {
+						"package": {
+							"type": "string",
+							"description": "Package name",
+							"minLength": 1
+						},
+						"dependencies": {
+							"type": "array",
+							"description": "Dependencies",
+							"items": {
+								"type": "string",
+								"description": "Dependency"
+							},
+							"uniqueItems": true
+						}
+					},
+					"uniqueItems": true
+				},
+				"tests": {
+					"type": "array",
+					"description": "Tests",
+					"items": {
+						"test": {
+							"type": "string",
+							"description": "Test name",
+							"minLength": 1
+						},
+						"dependencies": {
+							"type": "array",
+							"description": "Dependencies",
+							"items": {
+								"type": "string",
+								"description": "Dependency"
+							},
+							"uniqueItems": true
+						}
+					},
+					"uniqueItems": true
+				},
+				"mains": {
+					"type": "array",
+					"description": "Main packages",
+					"items": {
+						"path": {
+							"type": "string",
+							"description": "Path to main package",
+							"minLength": 1
+						},
+						"dependencies": {
+							"type": "array",
+							"description": "Dependencies",
+							"items": {
+								"type": "string",
+								"description": "Dependency"
+							},
+							"uniqueItems": true
+						}
+					}
+				},
+				"docs": {
+					"type": "array",
+					"description": "Docs",
+					"items": {
+						"type": "string",
+						"description": "Doc",
+						"minLength": 1
+					},
+					"uniqueItems": true
+				},
+				"licenses": {
+					"type": "array",
+					"description": "Licenses",
+					"items": {
+						"type": "object",
+						"description": "License",
+						"properties": {
+							"file": {
+								"type": "string",
+								"description": "License location",
+								"minLength": 1
+							},
+							"type": {
+								"type": "string",
+								"description": "License type",
+								"minLength": 1
+							}
+						},
+						"required": ["file", "type"]
+					},
+					"uniqueItems": true
+				},
+				"skipped_directories": {
+					"type": "array",
+					"description": "Directories to skip, e.g. Godeps, vendor",
+					"items": {
+						"type": "string",
+						"description": "Directory",
+						"minLength": 1
+					},
+					"uniqueItems": true
+				}
+			},
+			"required": ["packages", "tests", "mains", "docs", "skipped_directories"]
+		}
+	},
+	"required": ["metadata", "data"]
+}
