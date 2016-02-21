@@ -59,7 +59,6 @@ class Data2SpecModelData(object):
 				"package": package["package"],
 				"dependencies": deps
 			}
-			print obj
 			self.packages.append(obj)
 
 		# get tests
