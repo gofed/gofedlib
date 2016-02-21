@@ -18,7 +18,7 @@ class Data2SpecModelData(object):
 
 		self.ipparser = ImportPathParserBuilder().buildWithLocalMapping()
 
-	def filterOutNative(self, deps):
+	def _filterOutNative(self, deps):
 		o_deps = []
 		for dep in deps:
 			try:
@@ -30,34 +30,62 @@ class Data2SpecModelData(object):
 			o_deps.append(dep)
 		return o_deps
 
+	def _trimGodepsImports(self, godeps_import_path, deps):
+		godeps_import_path_len = len(godeps_import_path)
+		m_deps = []
+		for dep in deps:
+			if dep.startswith(godeps_import_path):
+				m_deps.append(dep[godeps_import_path_len:])
+				continue
+			m_deps.append(dep)
+		return m_deps
+
 	def combine(self, metadata, project_packages, content_metadata):
 		# metadata
 		self.metadata = metadata
 
+		godeps_import_path = "%s/Godeps/_workspace/src/" % metadata["import_path"]
+		godeps_import_path_len = len(godeps_import_path)
+
 		# get packages
 		self.packages = []
 		for package in  project_packages["data"]["dependencies"]:
+			deps = self._filterOutNative(map(lambda l: l["name"], package["dependencies"]))
+			# if Godeps is on, filter all import_path_prefix/Godeps imports
+			if content_metadata["metadata"]["godeps"]:
+				deps = self._trimGodepsImports(godeps_import_path, deps)
+
 			obj = {
 				"package": package["package"],
-				"dependencies": self.filterOutNative(map(lambda l: l["name"], package["dependencies"]))
+				"dependencies": deps
 			}
+			print obj
 			self.packages.append(obj)
 
 		# get tests
 		self.tests = []
 		for test in project_packages["data"]["tests"]:
+			deps = self._filterOutNative(test["dependencies"])
+			# if Godeps is on, filter all import_path_prefix/Godeps imports
+			if content_metadata["metadata"]["godeps"]:
+				deps = self._trimGodepsImports(godeps_import_path, deps)
 			obj = {
 				"test": test["test"],
-				"dependencies": self.filterOutNative(test["dependencies"])
+				"dependencies": deps
 			}
 			self.tests.append(obj)
 
 		# get mains
 		self.mains = []
 		for main in project_packages["data"]["main"]:
+			deps = self._filterOutNative(main["dependencies"])
+			# if Godeps is on, filter all import_path_prefix/Godeps imports
+			if content_metadata["metadata"]["godeps"]:
+				deps = self._trimGodepsImports(godeps_import_path, deps)
+
 			obj = {
 				"path": main["filename"],
-				"dependencies": self.filterOutNative(main["dependencies"])
+				"dependencies": deps
 			}
 			self.mains.append(obj)
 

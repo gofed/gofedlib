@@ -21,6 +21,7 @@ class ContentMetadataExtractor(object):
 		self.docs = []
 		self.non_go_directories = []
 		self.licenses = []
+		self.godeps = False
 
 		self._nodes = {}
 
@@ -65,6 +66,9 @@ class ContentMetadataExtractor(object):
 		for dirName, subdirList, fileList in os.walk(self.source_code_directory):
 			dir = dirName[root_dir_len:]
 
+			if dir == "/Godeps":
+				self.godeps = True
+
 			self._nodes[dir] = subdirList
 			self._dirs_flag[dir] = False
 
@@ -74,7 +78,7 @@ class ContentMetadataExtractor(object):
 
 				# get docs
 				if self._isLicense(file):
-					lic_file = "%s/%s" % (dirName[root_dir_len+1:], file)
+					lic_file = "%s/%s" % (dir[1:], file)
 					if lic_file[0] == "/":
 						lic_file = lic_file[1:]
 
@@ -112,6 +116,7 @@ class ContentMetadataExtractor(object):
 				"licenses": self.licenses,
 				"docs": self.docs,
 				"deps_directories": [],
-				"non_go_directories": self.non_go_directories
+				"non_go_directories": self.non_go_directories,
+				"godeps": self.godeps
 			}
 		}
