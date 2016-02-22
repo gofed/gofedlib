@@ -1,3 +1,5 @@
+from types import UnsupportedImportPathError
+
 class ProjectInfo:
 
 	def __init__(self, ipparser):
@@ -86,7 +88,11 @@ class ProjectInfo:
 		imported_packages = []
 		imported_native_packages = []
 		for path in occurrences:
-			self.ipparser.parse(path)
+			try:
+				self.ipparser.parse(path)
+			except UnsupportedImportPathError:
+				continue
+
 			if self.ipparser.isNative():
 				imported_native_packages.append(path)
 			else:

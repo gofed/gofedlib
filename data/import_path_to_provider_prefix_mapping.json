@@ -19,5 +19,7 @@
 {"ipprefix": "gopkg.in/mgo.v2","provider_prefix":"github.com/go-mgo/mgo"},
 {"ipprefix": "gopkg.in/tomb.v2","provider_prefix":"github.com/go-tomb/tomb"},
 {"ipprefix": "gopkg.in/gcfg.v1","provider_prefix":"github.com/go-gcfg/gcfg"},
-{"ipprefix": "k8s.io/heapster","provider_prefix":"github.com/kubernetes/heapster"}]
-
+{"ipprefix": "k8s.io/heapster","provider_prefix":"github.com/kubernetes/heapster"},
+{"ipprefix": "k8s.io/kubernetes","provider_prefix":"github.com/kubernetes/kubernetes"},
+{"ipprefix": "gopkg.in/natefinch/lumberjack.v1","provider_prefix":"github.com/natefinch/lumberjack"}
+]

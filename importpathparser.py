@@ -203,13 +203,14 @@ class ImportPathParser(object):
 
 	def parseGopkgImportPath(self, path):
 		"""
-		Definition: gopkg.in/<v>/<repo> || gopkg.in/<repo>.<v>
-		"""		
+		Definition: gopkg.in/<v>/<repo> || gopkg.in/<repo>.<v> || gopkg.in/<project>/<repo>
+		"""
 		parts = path.split('/')
 		if re.match('v[0-9]+', parts[1]):
 			if len(parts) < 3:
 				raise ValueError("Import path %s is not in gopkg.in/<v>/<repo> form" % path)
 
+			project = ""
 			repository = parts[2]
 			prefix = "/".join(parts[:3])
 			provider_prefix = "gopkg.in/%s/%s" % (parts[1], parts[2])
@@ -218,12 +219,22 @@ class ImportPathParser(object):
 				raise ValueError("Import path %s is not in gopkg.in/<repo>.<v> form" % path)
 
 			prefix = "/".join(parts[:2])
-			parts = parts[1].split(".")
-			if len(parts) != 2:
-				ValueError("Import path %s is not in gopkg.in/<repo>.<v> form" % path)
+			dotparts = parts[1].split(".")
+			if len(dotparts) == 1:
+				# gopkg.in/<project>/<repo>
+				if len(parts) != 3:
+					raise ValueError("Import path %s is not in gopkg.in/<project>/<repo> form" % path)
+				project = parts[1]
+				repository = parts[2]
+				provider_prefix = "gopkg.in/%s/%s" % (parts[1], parts[2])
 
-			repository = parts[0]
-			provider_prefix = "gopkg.in/%s.%s" % (parts[0], parts[1])
+			else:
+				if len(dotparts) != 2:
+					raise ValueError("Import path %s is not in gopkg.in/<repo>.<v> form" % path)
+
+				project = ""
+				repository = dotparts[0]
+				provider_prefix = "gopkg.in/%s.%s" % (dotparts[0], dotparts[1])
 
 		repo = {}
 		repo["provider"] = GOPKG
