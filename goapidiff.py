@@ -57,11 +57,11 @@ class GoApiDiff(object):
 		packages1 = {}
 		packages2 = {}
 
-		for pkg in self.exported_api_1["packages"]:
+		for pkg in self.exported_api_1:
 			ip1.append(pkg["package"])
 			packages1[pkg["package"]] = pkg
 
-		for pkg in self.exported_api_2["packages"]:
+		for pkg in self.exported_api_2:
 			ip2.append(pkg["package"])
 			packages2[pkg["package"]] = pkg
 
