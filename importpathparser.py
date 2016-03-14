@@ -19,7 +19,7 @@ class ImportPathParser(object):
 		prefix
 	"""
 
-	def __init__(self, ip2pp_mapping, ip2pkg_mapping, native_packages):
+	def __init__(self, ip2pp_mapping = {}, ip2pkg_mapping = {}, native_packages = []):
 		"""
 		:param ip2pp_mapping: import path prefix to provider prefix mapping
 		:type  ip2pp_mapping: json
@@ -102,13 +102,12 @@ class ImportPathParser(object):
 			self.native = True
 			return self
 
-		# parse original import path
-		info = self._parsePrefix(url)
-		self.import_path_prefix = info["provider_prefix"]
-
+		# any ip customization before parsing?
 		custom_ip = self.detectCustomImportPaths(url)
 		if custom_ip != {}:
 			url = custom_ip["provider_prefix"]
+			# get ipprefix of the original import path
+			self.import_path_prefix = custom_ip["prefix"]
 
 		info = self._parsePrefix(url)
 
