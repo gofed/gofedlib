@@ -1,0 +1,26 @@
+{
+        "schema": "http://json-schema.org/draft-04/schema#",
+        "title": "List of distribution packages",
+        "description": "List of packages for each distribution",
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"package": {
+				"description": "Package name",
+				"type": "string",
+				"minLength": 1
+			},
+			"distributions": {
+			        "type": "array",
+				"items": {
+					"description": "Distribution",
+					"type": "string",
+					"minLength": 1
+				},
+				"uniqueItems": true
+			},
+		"required": ["package", "distributions"]
+	},
+	"uniqueItems": true
+}
