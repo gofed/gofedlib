@@ -29,3 +29,13 @@ class ImportPathParserBuilder(object):
 		ip2pkg_location = "%s/data/import_path_to_package_name_mapping.json" % getScriptDir(__file__)
 
 		raise NotImplementedError()
+
+	def buildWithLocalMappingForIPPrefixDecomposer(self):
+		# TODO(jchaloup): read location of mappings from config file
+		ip2pp_location = "%s/data/import_path_to_provider_prefix_mapping.json" % getScriptDir(__file__)
+
+		# get mappings
+		with open(ip2pp_location, "r") as f:
+			ip2pp_mapping = json.load(f)
+
+		return ImportPathParser(ip2pp_mapping, {}, [])
