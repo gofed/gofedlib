@@ -127,7 +127,7 @@ class GoSymbolsExtractor(object):
 		data["dependencies"] = package_imports
 
 		# list of defined packages (defined package has at least one exported symbol)
-		data["packages"] = map(lambda i: str(i.split(":")[0]), self.symbols.keys())
+		data["packages"] = map(lambda i: self._normalizePath(str(i.split(":")[0])), self.symbols.keys())
 
 		# list of tests
 		test_objs = []
@@ -160,7 +160,7 @@ class GoSymbolsExtractor(object):
 
 			# full package name (location of a package without ipprefix)
 			path = str(key.split(":")[0])
-			package["package"] = path
+			package["package"] = self._normalizePath(path)
 
 			# data types
 			data_types = []
