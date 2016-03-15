@@ -59,14 +59,14 @@ class ContentMetadataExtractor(object):
 		provider_prefix_counter = 0
 		for dir in subdirs:
 			for prefix in ["github.com", "google.golang.org", "bitbucket.org", "golang.org", "gopkg.in", "speter.net", "k8s.io"]:
-				if dir.startswith(prefix):
+				if dir == prefix:
 					provider_prefix_counter += 1
 					continue
 
 		return provider_prefix_counter
 	def _isKnownDepsDirectoryPrefix(self, directory):
 		for prefix in ["/Godeps/_workspace/src", "/vendor/src", "/external"]:
-			if prefix == directory:
+			if directory.endswith(prefix):
 				return True
 
 		return False
@@ -114,17 +114,16 @@ class ContentMetadataExtractor(object):
 			if self._dirs_flag[dir]:
 				dir_files[dir] = filter(lambda l: l.endswith(".go"), fileList)
 
+		# detect known deps directory prefixes
+		if self.check_deps_directory_prefixes:
+			deps_dirs = filter(lambda l: self._isKnownDepsDirectoryPrefix(l), deps_dirs)
+
 		# minimize deps directories
 		deps_dirs = sorted(deps_dirs)
 		min_deps_dirs = deps_dirs
 		for dir in deps_dirs:
 			min_deps_dirs = filter(lambda l: l == dir or not l.startswith(dir), min_deps_dirs)
-
-		# detect known deps directory prefixes
-		if self.check_deps_directory_prefixes:
-			self._deps_dirs = filter(lambda l: self._isKnownDepsDirectoryPrefix(l), deps_dirs)
-		else:
-			self._deps_dirs = deps_dirs
+		self._deps_dirs = min_deps_dirs
 
 		# get go directories
 		self.go_directories = []
