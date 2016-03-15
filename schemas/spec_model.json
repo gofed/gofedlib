@@ -126,7 +126,17 @@
 				},
 				"skipped_directories": {
 					"type": "array",
-					"description": "Directories to skip, e.g. Godeps, vendor",
+					"description": "Directories to skip, e.g. doc directories, testdata",
+					"items": {
+						"type": "string",
+						"description": "Directory",
+						"minLength": 1
+					},
+					"uniqueItems": true
+				},
+				"dependency_directories": {
+					"type": "array",
+					"description": "Directories with bundled dependencies, e.g. Godeps, vendor, external",
 					"items": {
 						"type": "string",
 						"description": "Directory",
@@ -135,7 +145,7 @@
 					"uniqueItems": true
 				}
 			},
-			"required": ["packages", "tests", "mains", "docs", "skipped_directories"]
+			"required": ["packages", "tests", "mains", "docs", "skipped_directories", "dependency_directories"]
 		}
 	},
 	"required": ["metadata", "data"]

@@ -15,6 +15,7 @@ class Data2SpecModelData(object):
 		self.mains = []
 		self.docs = []
 		self.skipped_directories = []
+		self.dependency_directories = []
 
 		self.ipparser = ImportPathParserBuilder().buildWithLocalMapping()
 
@@ -30,30 +31,26 @@ class Data2SpecModelData(object):
 			o_deps.append(dep)
 		return o_deps
 
-	def _trimGodepsImports(self, godeps_import_path, deps):
-		godeps_import_path_len = len(godeps_import_path)
-		m_deps = []
-		for dep in deps:
-			if dep.startswith(godeps_import_path):
-				m_deps.append(dep[godeps_import_path_len:])
-				continue
-			m_deps.append(dep)
+	def _trimDependencyDirectoryPrefixes(self, prefixes, deps):
+		m_deps = deps
+		for prefix in prefixes:
+			prefix_len = len(prefix)
+			m_deps = map(lambda l: l[prefix_len:] if l.startswith(prefix) else l, m_deps)
 		return m_deps
 
 	def combine(self, metadata, project_packages, content_metadata):
 		# metadata
 		self.metadata = metadata
 
-		godeps_import_path = "%s/Godeps/_workspace/src/" % metadata["import_path"]
-		godeps_import_path_len = len(godeps_import_path)
+		dependency_directories = map(lambda l: "%s%s/" % (metadata["import_path"], l), content_metadata["metadata"]["dependency_directories"])
 
 		# get packages
 		self.packages = []
 		for package in  project_packages["data"]["dependencies"]:
 			deps = self._filterOutNative(map(lambda l: l["name"], package["dependencies"]))
-			# if Godeps is on, filter all import_path_prefix/Godeps imports
-			if content_metadata["metadata"]["godeps"]:
-				deps = self._trimGodepsImports(godeps_import_path, deps)
+			# if dependency directory is on, filter out all imports prefixed with known dependency directory prefix
+			if deps != [] and dependency_directories != []:
+				deps = self._trimDependencyDirectoryPrefixes(dependency_directories, deps)
 
 			obj = {
 				"package": package["package"],
@@ -65,9 +62,10 @@ class Data2SpecModelData(object):
 		self.tests = []
 		for test in project_packages["data"]["tests"]:
 			deps = self._filterOutNative(test["dependencies"])
-			# if Godeps is on, filter all import_path_prefix/Godeps imports
-			if content_metadata["metadata"]["godeps"]:
-				deps = self._trimGodepsImports(godeps_import_path, deps)
+			# if dependency directory is on, filter out all imports prefixed with known dependency directory prefix
+			if deps != [] and dependency_directories != []:
+				deps = self._trimDependencyDirectoryPrefixes(dependency_directories, deps)
+
 			obj = {
 				"test": test["test"],
 				"dependencies": deps
@@ -78,9 +76,9 @@ class Data2SpecModelData(object):
 		self.mains = []
 		for main in project_packages["data"]["main"]:
 			deps = self._filterOutNative(main["dependencies"])
-			# if Godeps is on, filter all import_path_prefix/Godeps imports
-			if content_metadata["metadata"]["godeps"]:
-				deps = self._trimGodepsImports(godeps_import_path, deps)
+			# if dependency directory is on, filter out all imports prefixed with known dependency directory prefix
+			if deps != [] and dependency_directories != []:
+				deps = self._trimDependencyDirectoryPrefixes(dependency_directories, deps)
 
 			obj = {
 				"path": main["filename"],
@@ -97,6 +95,9 @@ class Data2SpecModelData(object):
 		# get skipped_directories
 		self.skipped_directories = content_metadata["metadata"]["non_go_directories"]
 
+		# get dependency directories
+		self.dependency_directories = map(lambda l: l[1:] if l[0] == "/" else l, content_metadata["metadata"]["dependency_directories"])
+
 	def getData(self):
 		return {
 			"metadata": self.metadata,
@@ -106,6 +107,7 @@ class Data2SpecModelData(object):
 				"mains": self.mains,
 				"docs": self.docs,
 				"licenses": self.licenses,
-				"skipped_directories": self.skipped_directories
+				"skipped_directories": self.skipped_directories,
+				"dependency_directories": self.dependency_directories
 			}
 		}

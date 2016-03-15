@@ -3,7 +3,7 @@ from utils import runCommand
 
 class ContentMetadataExtractor(object):
 
-	def __init__(self, source_code_directory, verbose = False, skip_errors = False):
+	def __init__(self, source_code_directory, verbose = False, skip_errors = False, check_deps_directory_prefixes = True):
 		"""
 		:param source_code_directory:	source code directory
 		:type  source_code_directory:	str
@@ -17,11 +17,13 @@ class ContentMetadataExtractor(object):
 		"""Setting implicit flags"""
 		self.verbose = verbose
 		self.skip_errors = skip_errors
+		self.check_deps_directory_prefixes = check_deps_directory_prefixes
 
 		self.docs = []
+		self.go_directories = []
 		self.non_go_directories = []
 		self.licenses = []
-		self.godeps = False
+		self._deps_dirs = []
 
 		self._nodes = {}
 
@@ -53,21 +55,39 @@ class ContentMetadataExtractor(object):
 
 		return _or		
 
+	def _detectDepsDirectory(self, subdirs):
+		provider_prefix_counter = 0
+		for dir in subdirs:
+			for prefix in ["github.com", "google.golang.org", "bitbucket.org", "golang.org", "gopkg.in", "speter.net", "k8s.io"]:
+				if dir.startswith(prefix):
+					provider_prefix_counter += 1
+					continue
+
+		return provider_prefix_counter
+	def _isKnownDepsDirectoryPrefix(self, directory):
+		for prefix in ["/Godeps/_workspace/src", "/vendor/src", "/external"]:
+			if prefix == directory:
+				return True
+
+		return False
+
 	def extract(self):
 
 		# get a list of directory trees without any *.go file
 		root_dir_len = len(self.source_code_directory)
 
 		self._dirs_flag = {}
+		dir_files = {}
 		docs = []
 		license = ""
 		self._nodes = {}
+		deps_dirs = []
 
 		for dirName, subdirList, fileList in os.walk(self.source_code_directory):
 			dir = dirName[root_dir_len:]
 
-			if dir == "/Godeps":
-				self.godeps = True
+			if subdirList != [] and self._detectDepsDirectory(subdirList) > 0:
+				deps_dirs.append(dir)
 
 			self._nodes[dir] = subdirList
 			self._dirs_flag[dir] = False
@@ -91,6 +111,40 @@ class ContentMetadataExtractor(object):
 
 				if self._isDoc(file):
 					docs.append("%s/%s" % (dir, file))
+			if self._dirs_flag[dir]:
+				dir_files[dir] = filter(lambda l: l.endswith(".go"), fileList)
+
+		# minimize deps directories
+		deps_dirs = sorted(deps_dirs)
+		min_deps_dirs = deps_dirs
+		for dir in deps_dirs:
+			min_deps_dirs = filter(lambda l: l == dir or not l.startswith(dir), min_deps_dirs)
+
+		# detect known deps directory prefixes
+		if self.check_deps_directory_prefixes:
+			self._deps_dirs = filter(lambda l: self._isKnownDepsDirectoryPrefix(l), deps_dirs)
+		else:
+			self._deps_dirs = deps_dirs
+
+		# get go directories
+		self.go_directories = []
+		for dir in self._dirs_flag:
+			if not self._dirs_flag[dir]:
+				continue
+
+			skip = False
+			for prefix in min_deps_dirs:
+				if dir.startswith(prefix):
+					skip = True
+					break
+
+			if skip:
+				continue
+
+			self.go_directories.append({
+				"dir": dir,
+				"files": dir_files[dir]
+			})
 
 		# get non-go directories
 		non_go_directories = []
@@ -110,13 +164,19 @@ class ContentMetadataExtractor(object):
 		self.docs = map(lambda l: l[1:], docs)
 		self.non_go_directories = map(lambda l: l[1:], non_go_directories)
 
+
+	def getDepsDirectories(self):
+		return self._deps_dirs
+
+	def getGoDirectories(self):
+		return self.go_directories
+
 	def getProjectContentMetadata(self):
 		return {
 			"metadata": {
 				"licenses": self.licenses,
 				"docs": self.docs,
-				"deps_directories": [],
-				"non_go_directories": self.non_go_directories,
-				"godeps": self.godeps
+				"dependency_directories": self._deps_dirs,
+				"non_go_directories": self.non_go_directories
 			}
 		}

@@ -108,6 +108,9 @@ class ImportPathParser(object):
 			url = custom_ip["provider_prefix"]
 			# get ipprefix of the original import path
 			self.import_path_prefix = custom_ip["prefix"]
+		else:
+			info = self._parsePrefix(url)
+			self.import_path_prefix = info["prefix"]
 
 		info = self._parsePrefix(url)
 

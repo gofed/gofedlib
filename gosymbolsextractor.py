@@ -3,6 +3,7 @@ import logging
 import json
 from utils import getScriptDir, runCommand
 from coder import GoTypeCoder
+from contentmetadataextractor import ContentMetadataExtractor
 
 CONFIG_SOURCE_CODE_DIRECTORY = "resource"
 CONFIG_SKIPPED_DIRECTORIES = "directories_to_skip"
@@ -72,8 +73,6 @@ class GoSymbolsExtractor(object):
                 self.main_packages = []
                 # main packages dependencies
                 self.main_package_deps = {}
-                # Godeps directory is present
-                self.godeps_on = False
 
 		"""set implicit states"""
 		self.input_validated = False
@@ -86,6 +85,8 @@ class GoSymbolsExtractor(object):
 			return os.path.dirname(filepath) == packagepath
 
 		return os.path.dirname(filepath) == ""
+	def _normalizePath(self, path):
+		return path[1:] if path[0] == "/" else path
 
 	def getProjectPackages(self):
 		data = {}
@@ -117,7 +118,7 @@ class GoSymbolsExtractor(object):
 				deps.append(dep_obj)
 
 			pkg_obj =  {
-				"package": path,
+				"package": self._normalizePath(path),
 				"dependencies": deps,
 				"qualifier": qualifier
 			}
@@ -132,7 +133,7 @@ class GoSymbolsExtractor(object):
 		test_objs = []
 		for test_dir in self.test_directory_dependencies:
 			test_obj = {
-				"test": test_dir,
+				"test": self._normalizePath(test_dir),
 				"dependencies": self.test_directory_dependencies[test_dir]
 			}
 			test_objs.append(test_obj)
@@ -143,15 +144,12 @@ class GoSymbolsExtractor(object):
 		main_objs = []
 		for filename in self.main_package_deps:
 			main_obj = {
-				"filename": filename,
+				"filename": self._normalizePath(filename),
 				"dependencies": self.main_package_deps[filename]
 			}
 			main_objs.append(main_obj)
 
 		data["main"] = main_objs
-
-		# Godeps directory located
-		data["godeps_found"] = self.godeps_on
 
 		return data
 
@@ -192,31 +190,6 @@ class GoSymbolsExtractor(object):
 			packages.append(package)
 
 		return packages
-
-	def _getGoFiles(self, directory):
-		go_dirs = []
-		for dirName, subdirList, fileList in os.walk(directory):
-			# skip all directories with no file
-			if fileList == []:
-				continue
-
-			go_files = []
-			for fname in fileList:
-				# find any *.go file
-				if fname.endswith(".go"):
-					go_files.append(fname)
-
-			# skipp all directories with no *.go file
-			if go_files == []:
-				continue
-
-			relative_path = os.path.relpath(dirName, directory)
-			go_dirs.append({
-				'dir': relative_path,
-				'files': go_files,
-			})
-
-		return go_dirs
 
 	def _getGoSymbols(self, path, imports_only=False):
 		script_dir = getScriptDir(__file__) + "/."
@@ -265,10 +238,10 @@ class GoSymbolsExtractor(object):
 		main_packages = []
 		main_package_deps = {}
 
-		for dir_info in self._getGoFiles(self.directory):
-			if dir_info["dir"].startswith("Godeps"):
-				self.godeps_on = True
+		cme = ContentMetadataExtractor(self.directory)
+		cme.extract()
 
+		for dir_info in cme.getGoDirectories():
 			#if sufix == ".":
 			#	sufix = bname
 			pkg_name = ""
