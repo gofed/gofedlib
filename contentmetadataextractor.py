@@ -34,7 +34,7 @@ class ContentMetadataExtractor(object):
 		return doc in ['README', 'LICENSE', 'AUTHORS', 'COPYING', 'CONTRIBUTORS', 'HACKING', 'COPYRIGHT', 'PATENTS']
 
 	def _isLicense(self, doc):
-		return doc.lower() in ['license', 'license.txt', 'copying', 'copying.txt']
+		return doc.lower() in ['license', 'license.txt', 'copying', 'copying.txt', 'license.md']
 
 	def _getLicense(self, doc):
 		so, se, rc = runCommand("licensecheck %s" % doc)
