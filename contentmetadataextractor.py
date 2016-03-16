@@ -141,7 +141,7 @@ class ContentMetadataExtractor(object):
 				continue
 
 			self.go_directories.append({
-				"dir": dir,
+				"dir": dir if dir != "" else ".",
 				"files": dir_files[dir]
 			})
 
