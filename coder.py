@@ -65,6 +65,14 @@ class GoTypeCoder:
 
 		return ident_obj
 
+	def _is_parenthesis(self, type):
+		if type["type"] == TYPE_PARENTHESIS:
+			return True
+		return False
+
+	def _parenthesis_to_json(self, type):
+		return self._type_to_json(type["def"])
+
 	def _is_array(self, type):
 		if type["type"] == TYPE_ARRAY:
 			return True
@@ -651,6 +659,8 @@ class GoTypeCoder:
 			return self._ellipses_to_json(type)
 		if self._is_channel(type):
 			return self._channel_to_json(type)
+		if self._is_parenthesis(type):
+			return self._parenthesis_to_json(type)
 
 		logging.error("%s type not implemented" % type["type"])
 		logging.error(type)
