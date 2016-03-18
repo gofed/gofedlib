@@ -1,29 +1,25 @@
-class Build(object):
+class NVR(object):
 
-	def __init__(self, build):
-		self.build = build
+	def __init__(self, name):
+		self._name = name
 		self._parse()
 
 	def _parse(self):
 		# get n,v,r from build
-		parts = self.build.split("-")
+		parts = self._name.split("-")
 		if len(parts) < 3:
-			raise ValueError("Invalid build nvr: %s" % self.build)
+			raise ValueError("Invalid nvr: %s" % self._name)
 
-		self._release = parts[-1]		
+		self._release = parts[-1]
 		self._version = parts[-2]
 		self._name = "-".join(parts[:-2])
 
 		parts = self._release.split(".")
 		if len(parts) < 2:
-			raise ValueError("Invalid build nvr: %s" % self.build)
+			raise ValueError("Invalid nvr: %s" % self._name)
 
 		# e.g. etcd-2.2.4-2.fc24
 		self._tag = parts[-1]
-
-	def srpm(self):
-		"""Construct srpm from build"""
-		return "%s.src.rpm" % self.build
 
 	def name(self):
 		return self._name
@@ -37,6 +33,29 @@ class Build(object):
 	def tag(self):
 		return self._tag
 
+
+class Build(object):
+
+	def __init__(self, build):
+		self.build = build
+		self.nvr = NVR(build)
+
+	def srpm(self):
+		"""Construct srpm from build"""
+		return "%s.src.rpm" % self.build
+
+	def name(self):
+		return self.nvr.name()
+
+	def version(self):
+		return self.nvr.version()
+
+	def release(self):
+		return self.nvr.release()
+
+	def tag(self):
+		return self.nvr.tag()
+
 class Rpm(object):
 
 	def __init__(self, build, rpm):
@@ -45,6 +64,9 @@ class Rpm(object):
 		self._parse()
 
 	def _parse(self):
+		r_nvr = NVR(self.rpm)
+		self.r_name = r_nvr.name()
+
 		# get architecture
 		parts = self.rpm.split(".")
 		if len(parts) < 3:
@@ -56,13 +78,13 @@ class Rpm(object):
 		self._arch = parts[-2]
 
 		# get nvr
-		parts = self.build.split("-")
-		if len(parts) < 3:
-			raise ValueError("Invalid build nvr: %s" % self.build)
+		b_nvr = NVR(self.build)
+		self.b_release = b_nvr.release()
+		self.b_version = b_nvr.release()
+		self.b_name = b_nvr.name()
 
-		self.b_release = parts[-1]
-		self.b_version = parts[-2]
-		self.b_name = "-".join(parts[:-2])
+	def name(self):
+		return self.r_name
 
 	def arch(self):
 		return self._arch
