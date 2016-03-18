@@ -1,9 +1,45 @@
+import json
+import operator
+
+class Graph(object):
+
+	def __init__(self, nodes, edges):
+		self._nodes = nodes
+		self._edges = edges
+
+	def nodes(self):
+		return self._nodes
+
+	def edges(self):
+		return self._edges
+
+	def __str__(self):
+		return json.dumps({
+			"nodes": self._nodes,
+			"edges": self._edges
+		})
+
 class GraphUtils(object):
+	#
+	# TODO(jchaloup): make all method take and return Graph type when reasonable
+	#
+
+	@staticmethod
+	def edges2adjacentList(edges):
+		adj_list = {}
+		for (a, b) in edges:
+			try:
+				adj_list[a].append(b)
+			except KeyError:
+				adj_list[a] = [b]
+
+		return adj_list
 
 	# based on http://www.fit.vutbr.cz/study/courses/GAL/public/gal-slides.pdf
 	@staticmethod
 	def transposeGraph(graph):
-		nodes, edges = graph
+		nodes = graph.nodes()
+		edges = graph.edges()
 		tedges = {}
 		for u in edges:
 			for v in edges[u]:
@@ -13,11 +49,12 @@ class GraphUtils(object):
 				else:
 					tedges[v].append(u)
 
-		return (nodes, tedges)
+		return Graph(nodes, tedges)
 
 	@staticmethod
-	def getLeafPackages(graph):
-		nodes, edges = graph
+	def getLeafNodes(graph):
+		nodes = graph.nodes()
+		edges = graph.edges()
 
 		leaves = []
 
@@ -29,8 +66,9 @@ class GraphUtils(object):
 		return leaves
 
 	@staticmethod
-	def getRootPackages(graph):
-		nodes, edges = graph
+	def getRootNodes(graph):
+		nodes = graph.nodes()
+		edges = graph.edges()
 
 		visited = {}
 		for u in nodes:
@@ -78,7 +116,7 @@ class GraphUtils(object):
 		return SCCBuilder(graph).build().getSCC()
 
 	@staticmethod	
-	def getReacheableSubgraph(graph, node)
+	def getReacheableSubgraph(graph, node):
 		nodes, edges = graph
 		dfs = DFS(graph)
 		reacheable = dfs.DFSSimpleWalk(node)
@@ -95,9 +133,21 @@ class GraphUtils(object):
 
 		return (reacheable, r_edges)
 
+	@staticmethod
+	def truncateGraph(graph, root_nodes):
+		"""Create a set of all nodes containg the root_nodes and
+		   all nodes reacheable from them
+		"""
+		# TODO(jchaloup): creat emptyGraph() method
+		subgraph = ([], {})
+		for node in root_nodes:
+			subgraph = joinGraphs(subgraph, GraphUtils.getReacheableSubgraph(graph, node))
+	
+		return subgraph
+
 class SCCBuilder(object):
 
-	def __init__(self, graph)
+	def __init__(self, graph):
 		self._graph = graph
 		self._sccs = []
 
@@ -105,9 +155,10 @@ class SCCBuilder(object):
 		return self._sccs
 
 	def build(self):
-		nodes, edges = self._graph
+		nodes = self._graph.nodes()
+		edges = self._graph.edges()
 		f, d = DFS(self._graph).DFSWalk()
-		tgraph = transposeGraph(self._graph)
+		tgraph = GraphUtils.transposeGraph(self._graph)
 		start_nodes, pred = DFS(tgraph).DFSWalk(f)
 		trees = []
 		for node in start_nodes:
@@ -134,12 +185,13 @@ class SCCBuilder(object):
 		if pred[s] == '':
 			return [s]
 		else:
-			return [s] + self._getSucc(pred[s], pred)
+			return [s] + SCCBuilder._getSucc(pred[s], pred)
 
 class DFS:
 
 	def __init__(self, graph):
-		self.nodes, self.edges = graph
+		self.nodes = graph.nodes()
+		self.edges = graph.edges()
 
 		self.WHITE=0
 		self.GRAY=1
