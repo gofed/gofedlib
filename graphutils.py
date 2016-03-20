@@ -3,7 +3,7 @@ import operator
 
 class Graph(object):
 
-	def __init__(self, nodes, edges):
+	def __init__(self, nodes = [], edges = {}):
 		self._nodes = nodes
 		self._edges = edges
 
@@ -88,13 +88,11 @@ class GraphUtils(object):
 
 	@staticmethod
 	def joinGraphs(g1, g2):
-		g1_nodes, g1_edges = g1
-		g2_nodes, g2_edges = g2
+		nodes = g1.nodes()
+		edges = g1.edges()
+		g2_edges = g2.edges()
 
-		nodes = g1_nodes
-		edges = g1_edges
-
-		for u in g2_nodes:
+		for u in g2.nodes():
 			if u not in nodes:
 				nodes.append(u)
 
@@ -109,7 +107,7 @@ class GraphUtils(object):
 				else:
 					edges[u] = [v]
 
-		return (nodes, edges)
+		return Graph(nodes, edges)
 
 	@staticmethod
 	def getSCCs(graph):
@@ -117,7 +115,8 @@ class GraphUtils(object):
 
 	@staticmethod	
 	def getReacheableSubgraph(graph, node):
-		nodes, edges = graph
+		nodes = graph.nodes()
+		edges = graph.edges()
 		dfs = DFS(graph)
 		reacheable = dfs.DFSSimpleWalk(node)
 
@@ -131,18 +130,17 @@ class GraphUtils(object):
 				if v in reacheable:
 					r_edges[u].append(v)
 
-		return (reacheable, r_edges)
+		return Graph(reacheable, r_edges)
 
 	@staticmethod
 	def truncateGraph(graph, root_nodes):
 		"""Create a set of all nodes containg the root_nodes and
 		   all nodes reacheable from them
 		"""
-		# TODO(jchaloup): creat emptyGraph() method
-		subgraph = ([], {})
+		subgraph = Graph()
 		for node in root_nodes:
-			subgraph = joinGraphs(subgraph, GraphUtils.getReacheableSubgraph(graph, node))
-	
+			subgraph = GraphUtils.joinGraphs(subgraph, GraphUtils.getReacheableSubgraph(graph, node))
+
 		return subgraph
 
 class SCCBuilder(object):
