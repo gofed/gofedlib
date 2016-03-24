@@ -8,15 +8,22 @@ Covered areas:
 - dependency graph analysis (detection of cyclic dependencies)
 - ecosystem scanning (new packages, new commits in upstream repositories, new builds in distribution builder)
 
+## How to install
+
+There are two ways:
+
+* clone the repository as gofed_lib directory under ``/usr/lib/python2.*/site-packages/`` (or ``/usr/lib/python3.*/site-packages/``)
+* when running your code, set ``PYTHONPATH`` directory to point to gofed/lib's repository directory
+
 ## Examples
 
 ### Go source code analysis
 
 There are three function to be called:
 
-* project_packages - returns project's defined packages complying to [golang-project-packages](https://github.com/gofed/infra/blob/master/system/artefacts/schemas/golang-project-packages.json) JSON Schema
-* api - returns project's exported API complying to [golang-project-exported-api](https://github.com/gofed/infra/blob/master/system/artefacts/schemas/golang-project-exported-api.json) JSON Schema
-* apidiff - compare two API of a given project, returns comparison complying to [golang-projects-api-diff](https://github.com/gofed/infra/blob/master/system/artefacts/schemas/golang-projects-api-diff.json) JSON Schema
+* project_packages - returns project's defined packages complying to ``data`` property's subset of [golang-project-packages](https://github.com/gofed/infra/blob/master/system/artefacts/schemas/golang-project-packages.json) JSON Schema
+* api - returns project's exported API complying to ``packages`` property's [golang-project-exported-api](https://github.com/gofed/infra/blob/master/system/artefacts/schemas/golang-project-exported-api.json) JSON Schema
+* apidiff - compare two API of a given project, returns comparison complying to ``data`` property's [golang-projects-api-diff](https://github.com/gofed/infra/blob/master/system/artefacts/schemas/golang-projects-api-diff.json) JSON Schema
 
 ```python
 # extract API and dependencies
@@ -35,6 +42,55 @@ except ExtractionError as e:
 	exit(1)
 
 # print list of defined packages in etcd
-for package in etcd_packages["data"]["packages"]:
+print "Defined packages"
+for package in etcd_packages["packages"]:
 	print package
+print ""
+
+# print list of defined exported functions in etcd
+print "Defined functions"
+for package in etcd_api:
+	print package["package"]
+	for func in package["functions"]:
+		print "\t%s" % func["name"]
+print ""
+```
+
+```python
+# API comparision
+
+from gofed_lib.gosymbolsextractor import api
+from gofed_lib.goapidiff import apidiff
+from gofed_lib.types import ExtractionError
+import logging
+
+source_code_directory1 = "~/Golang/etcd/etcd-5e6eb7e19d6385adfabb1f1caea03e732f9348ad"
+source_code_directory2 = "~/Golang/etcd/etcd-bc9ddf260115d2680191c46977ae72b837785472"
+
+try:
+	etcd_api1 = api(source_code_directory1)
+except ExtractionError as e:
+	logging.error("Unable to extract %s: %s" % (source_code_directory1, e))
+	exit(1)
+
+try:
+	etcd_api2 = api(source_code_directory2)
+except ExtractionError as e:
+	logging.error("Unable to extract %s: %s" % (source_code_directory2, e))
+	exit(1)
+
+# get apidiff
+try:
+	api1_api2_diff = apidiff(etcd_api1, etcd_api2)
+except ValueError as e:
+	logging.error("Unable to compare API: %s" % e)
+	exit(1)
+
+# print updated symbols in API
+for package in api1_api2_diff["updatedpackages"]:
+        if "types" in package and "updated" in package["types"]:
+                print "%s:" % package["package"]
+                for change in package["types"]["updated"]:
+                        print change
+                print ""
 ```
