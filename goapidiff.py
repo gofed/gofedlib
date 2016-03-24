@@ -102,12 +102,10 @@ class GoApiDiff(object):
 			diff_data_types = self._compareDataTypes(definition1["datatypes"], definition2["datatypes"])
 
 		if types1_in and not types2_in:
-			logging.error("definition2: datatypes field missing")
-			return False
+			raise ValueError("definition2: datatypes field missing")
 
 		if not types1_in and types2_in:
-			logging.error("definition1: datatypes field missing")
-			return False
+			raise ValueError("definition1: datatypes field missing")
 
 		# compare functions types
 		types1_in = "functions" in definition1
@@ -116,12 +114,10 @@ class GoApiDiff(object):
 			diff_func_types = self._compareFuncTypes(definition1["functions"], definition2["functions"])
 
 		if types1_in and not types2_in:
-			logging.error("definition2: functions field missing")
-			return False
+			raise ValueError("definition2: functions field missing")
 
 		if not types1_in and types2_in:
-			logging.error("definition1: functions field missing")
-			return False
+			raise ValueError("definition1: functions field missing")
 
 		# compare variables types
 		types1_in = "variables" in definition1
@@ -130,12 +126,10 @@ class GoApiDiff(object):
 			diff_vars_types = self._compareVariables(definition1["variables"], definition2["variables"])
 
 		if types1_in and not types2_in:
-			logging.error("definition2: variables field missing")
-			return False
+			raise ValueError("definition2: variables field missing")
 
 		if not types1_in and types2_in:
-			logging.error("definition1: variables field missing")
-			return False
+			raise ValueError("definition1: variables field missing")
 
 		pkg_obj = {}
 
@@ -237,8 +231,7 @@ class GoApiDiff(object):
 			self._compareMethods(data_type1, data_type2)
 			return
 
-		logging.error("%s type not implemented yet" % type)
-		return
+		raise ValueError("%s type not implemented yet" % type)
 
 	def _constructTypeQualifiedName(self, type, full=False):
 		"""
@@ -259,8 +252,7 @@ class GoApiDiff(object):
 			else:
 				return type["item"]
 		else:
-			logging.error("Type %s can not be used for FQN" % t)
-			return ""
+			raise ValueError("Type %s can not be used for FQN" % t)
 
 	def _compareStructs(self, struct1, struct2, name = ""):
 		fields1 = []

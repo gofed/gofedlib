@@ -6,3 +6,6 @@ class TagsNotRetrieved(Exception):
 
 class UnsupportedImportPathError(Exception):
 	pass
+
+class ExtractionError(Exception):
+	pass

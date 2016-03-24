@@ -4,6 +4,7 @@ import json
 from utils import getScriptDir, runCommand
 from coder import GoTypeCoder
 from contentmetadataextractor import ContentMetadataExtractor
+from .types import ExtractionError
 
 CONFIG_SOURCE_CODE_DIRECTORY = "resource"
 CONFIG_SKIPPED_DIRECTORIES = "directories_to_skip"
@@ -13,7 +14,7 @@ DATA_IPPREFIX = "ipprefix"
 
 def api(source_code_directory, skipped_directories = []):
 	obj = GoSymbolsExtractor(source_code_directory, skipped_directories)
-	obj.extract()
+	obj.extract():
 	return obj.getProjectExportedAPI()
 
 def project_packages(source_code_directory, ipprefix, skipped_directories = []):
@@ -276,8 +277,7 @@ class GoSymbolsExtractor(object):
 					if self.skip_errors:
 						continue
 					else:
-						logging.error("Error parsing %s: %s" % ("%s/%s" % (dir_info['dir'], go_file), output))
-						return False
+						raise ExtractionError("Error parsing %s: %s" % ("%s/%s" % (dir_info['dir'], go_file), output))
 				else:
 					#print go_file
 					go_file_json = json.loads(output)
@@ -336,12 +336,12 @@ class GoSymbolsExtractor(object):
 				# all files in a directory must define the same package
 				if (pkg_name != "" and pkg_name != pname):
 					err_msg = "directory %s contains definition of more packages, i.e. %s" % (dir_info['dir'], pname)
-					logging.error("%s" % err_msg)
 
 					if self.skip_errors:
+						logging.error(err_msg)
 						continue
 
-					return False
+					raise ExtractionError(err_msg)
 
 				pkg_name = pname
 
@@ -381,6 +381,4 @@ class GoSymbolsExtractor(object):
 		self.test_directory_dependencies = test_directory_dependencies
 		self.main_packages = main_packages
 		self.main_package_deps = main_package_deps
-
-		return True
 
