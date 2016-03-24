@@ -31,10 +31,10 @@ class ContentMetadataExtractor(object):
 		if doc.endswith(".md"):
 			return True
 
-		return doc in ['README', 'LICENSE', 'AUTHORS', 'COPYING', 'CONTRIBUTORS', 'HACKING', 'COPYRIGHT', 'PATENTS']
+		return doc in ['README', 'LICENSE', 'LICENCE', 'AUTHORS', 'COPYING', 'CONTRIBUTORS', 'HACKING', 'COPYRIGHT', 'PATENTS']
 
 	def _isLicense(self, doc):
-		return doc.lower() in ['license', 'license.txt', 'copying', 'copying.txt', 'license.md']
+		return doc.lower() in ['license', 'licence', 'license.txt', 'copying', 'copying.txt', 'license.md']
 
 	def _getLicense(self, doc):
 		so, se, rc = runCommand("licensecheck %s" % doc)
