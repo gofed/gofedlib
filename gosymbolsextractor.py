@@ -14,10 +14,10 @@ DATA_IPPREFIX = "ipprefix"
 
 def api(source_code_directory, skipped_directories = []):
 	obj = GoSymbolsExtractor(source_code_directory, skipped_directories)
-	obj.extract():
+	obj.extract()
 	return obj.getProjectExportedAPI()
 
-def project_packages(source_code_directory, ipprefix, skipped_directories = []):
+def project_packages(source_code_directory, ipprefix = ".", skipped_directories = []):
 	obj = GoSymbolsExtractor(source_code_directory, skipped_directories, ipprefix)
 	obj.extract()
 	return obj.getProjectPackages()
