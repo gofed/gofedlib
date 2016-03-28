@@ -7,6 +7,7 @@
 {"ipprefix": "golang.org/x/crypto","provider_prefix":"github.com/golang/crypto"},
 {"ipprefix": "golang.org/x/exp","provider_prefix":"github.com/golang/exp"},
 {"ipprefix": "golang.org/x/image","provider_prefix":"github.com/golang/image"},
+{"ipprefix": "golang.org/x/net","provider_prefix":"github.com/golang/net"},
 {"ipprefix": "golang.org/x/oauth2","provider_prefix":"github.com/golang/oauth2"},
 {"ipprefix": "golang.org/x/sys","provider_prefix":"github.com/golang/sys"},
 {"ipprefix": "google.golang.org/appengine","provider_prefix":"github.com/golang/appengine"},
