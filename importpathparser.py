@@ -40,6 +40,7 @@ class ImportPathParser(object):
 		self.prefix = ""
 		self.native = False
 		self.import_path_prefix = ""
+		self.provider_signature = {}
 
 	def getProvider(self):
 		return self.provider
@@ -58,6 +59,9 @@ class ImportPathParser(object):
 
 	def getProviderName(self):
 		return self.provider_name
+
+	def getProviderSignature(self):
+		return self.provider_signature
 
 	def getImportPathPrefix(self):
 		return self.import_path_prefix
@@ -119,6 +123,7 @@ class ImportPathParser(object):
 		self.repository = info["repo"]
 		self.provider_prefix = info["provider_prefix"]
 		self.provider_name = info["provider_name"]
+		self.provider_signature = info["provider_signature"]
 
 		if custom_ip != {}:
 			self.prefix = custom_ip["prefix"]
@@ -162,6 +167,7 @@ class ImportPathParser(object):
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "github.com/%s/%s" % (parts[1], parts[2])
 		repo["provider_name"] = "github"
+		repo["provider_signature"] = {"provider": "github", "username": repo["project"], "project": repo["repo"]}
 
 		return repo
 
@@ -181,6 +187,7 @@ class ImportPathParser(object):
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "code.google.com/p/%s" % (parts[2])
 		repo["provider_name"] = "googlecode"
+		repo["provider_signature"] = {"provider": "googlecode", "username": repo["project"], "project": repo["repo"]}
 
 		return repo
 
@@ -200,6 +207,7 @@ class ImportPathParser(object):
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "bitbucket.org/%s/%s" % (parts[1], parts[2])
 		repo["provider_name"] = "bitbucket"
+		repo["provider_signature"] = {"provider": "bitbucket", "username": repo["project"], "project": repo["repo"]}
 
 		return repo
 
@@ -245,6 +253,7 @@ class ImportPathParser(object):
 		repo["prefix"] = prefix
 		repo["provider_prefix"] = provider_prefix
 		repo["provider_name"] = "gopkg"
+		repo["provider_signature"] = {"provider": "gopkg", "username": repo["project"], "project": repo["repo"]}
 
 		return repo
 
@@ -264,6 +273,7 @@ class ImportPathParser(object):
 		repo["prefix"] = "/".join(parts[:2])
 		repo["provider_prefix"] = "google.golang.org/%s" % (parts[1])
 		repo["provider_name"] = "googlegolangorg"
+		repo["provider_signature"] = {"provider": "googlegolangorg", "username": repo["project"], "project": repo["repo"]}
 
 		return repo
 
@@ -283,6 +293,7 @@ class ImportPathParser(object):
 		repo["prefix"] = "/".join(parts[:3])
 		repo["provider_prefix"] = "golang.org/x/%s" % (parts[2])
 		repo["provider_name"] = "golangorg"
+		repo["provider_signature"] = {"provider": "golangorg", "username": repo["project"], "project": repo["repo"]}
 
 		return repo
 
