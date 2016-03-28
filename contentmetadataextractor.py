@@ -89,6 +89,9 @@ class ContentMetadataExtractor(object):
 			if subdirList != [] and self._detectDepsDirectory(subdirList) > 0:
 				deps_dirs.append(dir)
 
+			# filter out all symlinks
+			subdirList = filter(lambda l: not os.path.islink(os.path.join(dirName, l)), subdirList)
+
 			self._nodes[dir] = subdirList
 			self._dirs_flag[dir] = False
 
