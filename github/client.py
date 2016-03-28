@@ -13,6 +13,7 @@
 # - get info about a commit
 
 import git
+from gitdb.exc import BadObject
 import time
 import datetime
 
@@ -23,7 +24,6 @@ class GithubClient(object):
 		self.project = project
 
 	#def branches(self):
-		
 
 class GithubLocalClient(object):
 
@@ -88,9 +88,25 @@ class GithubLocalClient(object):
 
 		return commits
 
+	def commit(self, commit):
+		"""Get data for a given commit
+
+		Raises KeyError if a commit is not found or not parsed.
+
+		:param commit: repository commit
+		:type  commit: string
+		"""
+		try:
+			return self._commitData(self.repo.commit(commit))
+		except (ValueError, KeyError, BadObject):
+			raise KeyError("Commit %s not found" % commit)
+
+
 if __name__ == "__main__":
 	#client = GithubLocalClient("/home/jchaloup/Packages/golang-github-abbot-go-http-auth/upstream/go-http-auth")
 	client = GithubLocalClient("/home/jchaloup/Packages/etcd/upstream/etcd")
 	print client.branches()
+	#print ""
+	#print len(client.commits("release-2.3").keys())
 	print ""
-	print len(client.commits("release-2.3").keys())
+	print client.commit("5e6eb7e19d6385adfabb1f1caea03e732f9348ad")
