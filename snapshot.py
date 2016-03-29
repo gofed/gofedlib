@@ -3,6 +3,9 @@ class Snapshot(object):
 	def __init__(self):
 		self.packages = {}
 
+	def clear(self):
+		self.packages = {}
+
 	def addPackage(self, package, commit):
 		self.packages[package] = commit
 
