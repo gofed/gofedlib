@@ -11,7 +11,6 @@ class Snapshot(object):
 
 	def Godeps(self):
 		"""Return the snapshot in Godeps.json form
-
 		"""
 		dict = []
 		for package in sorted(self.packages.keys()):
@@ -21,3 +20,12 @@ class Snapshot(object):
 			})
 
 		return dict
+
+	def GLOGFILE(self):
+		"""Return the snapshot in GLOGFILE form
+		"""
+		lines = []
+		for package in sorted(self.packages.keys()):
+			lines.append("%s %s" % (str(package), str(self.packages[package])))
+
+		return "\n".join(lines)
