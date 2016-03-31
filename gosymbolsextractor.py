@@ -7,18 +7,15 @@ from contentmetadataextractor import ContentMetadataExtractor
 from .types import ExtractionError
 
 CONFIG_SOURCE_CODE_DIRECTORY = "resource"
-CONFIG_SKIPPED_DIRECTORIES = "directories_to_skip"
-DATA_PROJECT = "project"
 DATA_COMMIT = "commit"
-DATA_IPPREFIX = "ipprefix"
 
-def api(source_code_directory, skipped_directories = []):
-	obj = GoSymbolsExtractor(source_code_directory, skipped_directories)
+def api(source_code_directory):
+	obj = GoSymbolsExtractor(source_code_directory)
 	obj.extract()
 	return obj.getProjectExportedAPI()
 
-def project_packages(source_code_directory, ipprefix = ".", skipped_directories = []):
-	obj = GoSymbolsExtractor(source_code_directory, skipped_directories, ipprefix)
+def project_packages(source_code_directory):
+	obj = GoSymbolsExtractor(source_code_directory)
 	obj.extract()
 	return obj.getProjectPackages()
 
@@ -40,14 +37,10 @@ class GoSymbolsExtractor(object):
 	 To make the class config indepenent, all flags
 	 are passed via class methods.
 	"""
-	def __init__(self, source_code_directory, skipped_directories = [], ipprefix = ".", verbose = False, skip_errors = False):
+	def __init__(self, source_code_directory, verbose = False, skip_errors = False):
 		"""Neco
 		:param source_code_directory:	source code directory
 		:type  source_code_directory:	str
-		:param skipped_directories:	directories to skip
-		:type  skipped_directories:	[str]
-		:param ipprefix:	import path prefix
-		:type  ipprefix:	str
 		:param verbose:			verbose mode
 		:type  verbose:			bool
 		:param skip_errors:		error skipping
@@ -78,8 +71,6 @@ class GoSymbolsExtractor(object):
 		"""set implicit states"""
 		self.input_validated = False
 		self.directory = source_code_directory
-		self.noGodeps = skipped_directories
-		self.ipprefix = ipprefix
 
 	def _filterDeps(self, filepath, packagepath):
 		if packagepath != ".":
@@ -248,23 +239,6 @@ class GoSymbolsExtractor(object):
 			pkg_name = ""
 			prefix = ""
 			jsons = {}
-			if self.noGodeps != []:
-				skip = False
-				path_components = dir_info['dir'].split("/")
-				for nodir in self.noGodeps:
-					parts = nodir.split(":")
-					name = parts[0]
-					# empty means all elements
-					max_depth = len(path_components)
-					if len(parts) == 2 and parts[1].isdigit():
-						max_depth = int(parts[1])
-
-					if name in path_components[0:max_depth]:
-						skip = True
-						break
-				if skip:
-					continue
-
 			for go_file in dir_info['files']:
 
 				if self.verbose:
