@@ -2,6 +2,9 @@ from importpathparser import ImportPathParser
 import json
 from utils import getScriptDir
 
+# TODO(jchaloup):
+# - introduce buildDefault() and make it configurable
+
 class ImportPathParserBuilder(object):
 
 	def buildWithLocalMapping(self):
