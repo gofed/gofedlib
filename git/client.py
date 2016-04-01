@@ -17,7 +17,7 @@ from gitdb.exc import BadObject
 import time
 import datetime
 
-class GithubClient(object):
+class GitClient(object):
 
 	def __init__(self, username, project):
 		self.username = username
@@ -25,7 +25,7 @@ class GithubClient(object):
 
 	#def branches(self):
 
-class GithubLocalClient(object):
+class GitLocalClient(object):
 
 	def __init__(self, repo_directory):
 		self.repo = git.Repo(repo_directory)
@@ -103,8 +103,8 @@ class GithubLocalClient(object):
 
 
 if __name__ == "__main__":
-	#client = GithubLocalClient("/home/jchaloup/Packages/golang-github-abbot-go-http-auth/upstream/go-http-auth")
-	client = GithubLocalClient("/home/jchaloup/Packages/etcd/upstream/etcd")
+	#client = GitLocalClient("/home/jchaloup/Packages/golang-github-abbot-go-http-auth/upstream/go-http-auth")
+	client = GitLocalClient("/home/jchaloup/Packages/etcd/upstream/etcd")
 	print client.branches()
 	#print ""
 	#print len(client.commits("release-2.3").keys())
