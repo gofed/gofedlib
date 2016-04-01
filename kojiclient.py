@@ -16,7 +16,7 @@ class KojiClient(object):
 		data = self.session.getLatestRPMS(distribution, package=package)
 
 		if len(data[1]) == 0:
-			raise KeyError("'%s' package not found\n" % pkg)
+			raise KeyError("'%s' package not found" % package)
 
 		build = "%s-%s-%s" % (data[1][0]["package_name"], data[1][0]["version"], data[1][0]["release"])
 		rpms = []
