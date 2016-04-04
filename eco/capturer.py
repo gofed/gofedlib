@@ -18,7 +18,7 @@ class EcoCapturer(object):
 		self.pkgdb_client = pkgdb_client
 		self._snapshots = {}
 
-	def captureLatest(self, distributions, custom_packages):
+	def captureLatest(self, distributions, custom_packages, blacklist = []):
 		"""Get the latest snapshot for requested distributions
 
 		:param distributions: list of distributions, each item as {"product": ..., "version": ...}
@@ -36,7 +36,7 @@ class EcoCapturer(object):
 			logging.info("Scanning %s:%s..." % (distribution["product"], distribution["version"]))
 			snapshot = DistributionSnapshot(distribution)
 
-			for package in packages.keys() + custom_packages:
+			for package in sorted(list(set(packages.keys() + custom_packages) - set(blacklist))):
 				# filter out all packages not in targeted distribution
 				# custom package inherits all available branches
 				if package in packages:
