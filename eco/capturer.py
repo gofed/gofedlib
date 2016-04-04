@@ -58,14 +58,14 @@ class EcoCapturer(object):
 					logging.error(e)
 					continue
 
-				snapshot.setRpms(package, data["rpms"])
+				snapshot.setRpms(package, data["name"], data["rpms"])
 
 				counter = counter + 1
 				if counter > 3:
 					break
 
 			snapshot_key = "%s:%s" % (distribution["product"], distribution["version"])
-			self._snapshots[snapshot_key] = snapshot
+			self._snapshots[snapshot_key] = {"snapshot": snapshot, "distribution": distribution}
 
 		return self
 

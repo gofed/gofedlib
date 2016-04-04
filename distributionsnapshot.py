@@ -13,6 +13,7 @@
 # TODO(jchaloup):
 # - snapshot manager extended by distribution snapshot manager
 # - integrate orphaned packages as well (maybe not needed as the latest rpm gets fixed), what koji client returns for orphaned package?
+# - introduce snapshot interpreter (to distinguish devel, unit-test and other rpm types) and snapshot filter (to return only rpms with specified label)
 
 import time
 import json
@@ -20,74 +21,95 @@ import json
 class DistributionSnapshot(object):
 
 	def __init__(self, distribution = "", go_version = ""):
-		self.distribution = distribution
+		self._distribution = distribution
 		self.go_version = ""
 
 		# dictionary of lists
-		self.rpms = {}
+		self._builds = {}
 
 		self.created = int(time.time())
 
-	def packages(self):
+	def builds(self):
 		"""Get a list of packages in the snapshot.
 		Each package with attached list of rpms.
 		"""
-		return self.rpms
+		return self._builds
 
-	def setRpms(self, package, rpms):
+	def distribution(self):
+		return self._distribution
+
+	def setRpms(self, package, build, rpms):
 		"""Add/Update package rpm
 		"""
-		self.rpms[package] = rpms
+		self._builds[package] = {"build": build, "rpms": rpms}
 
 	def clone(self):
 		"""Clone (deepcopy) snapshot
 		"""
-		snapshot = DistributionSnapshot(self.distribution, self.go_version)
-		for package in self.rpms:
-			snapshot.setRpms(package, self.rpms[package])
+		snapshot = DistributionSnapshot(self.distribution(), self.go_version)
+		for package in self.builds:
+			snapshot.setRpms(package, self.builds[package]["build"], self.builds[package]["rpms"])
 
 		return snapshot
 
 	def json(self):
+		builds = []
+		for package in self._builds:
+			builds.append({
+				"name": package,
+				"build": self._builds[package]["build"],
+				"rpms": map(lambda l: l["name"], self._builds[package]["rpms"])
+			})
+
 		return {
-			"distribution": self.distribution,
+			"distribution": self.distribution(),
 			"go_version": self.go_version,
 			"timestamp": self.created,
-			"packages": self.rpms
+			"builds": builds
 		}
+
+	def read(self, data):
+		self._distribution = data["distribution"]
+		self.go_version = data["go_version"]
+		self.timestamp = data["timestamp"]
+
+		builds = {}
+		for build in data["builds"]:
+			builds[build["name"]] = {"build": build["build"], "rpms": build["rpms"]}
+
+		self._builds = builds
+
+		return self
 
 	def load(self, file):
 		with open(file, "r") as f:
 			data = json.load(f)
 
-		self.distribution = data["distribution"]
+		self._distribution = data["distribution"]
 		self.go_version = data["go_version"]
 		self.timestamp = data["timestamp"]
-		self.rpms = data["packages"]
+		self._builds = data["builds"]
 
 		return self
 
 	def compare(self, snapshot):
 		"""Compare two snapshots:
 		- return a list of new packages in this snapshot
-		- return a list of new rpms in this snapshot
+		- return a list of new builds in this snapshot
 
 		:param snapshot: distribution snapshot
 		:type  snapshot: DistributionSnapshot
 		"""
-		packages = snapshot.packages()
+		builds = snapshot.builds()
 
-		diff_snapshot = DistributionSnapshot(self.distribution, self.go_version)
+		diff_snapshot = DistributionSnapshot(self.distribution(), self.go_version)
 
-		for package in list(set(self.rpms.keys()) - set(packages.keys())):
-			diff_snapshot.setRpms(package, self.rpms[package])
+		for package in list(set(self._builds.keys()) - set(builds.keys())):
+			diff_snapshot.setRpms(package, self._builds[package]["build"], self._builds[package]["rpms"])
 
-		new_rpms = {}
-		for package in list(set(self.rpms.keys()) & set(packages.keys())):
-			current_rpms = map(lambda l: l["name"], self.rpms[package])
-			rpms = map(lambda l: l["name"], packages[package])
-			difference = list(set(current_rpms) - set(new_rpms))
-			if difference != []:
-				diff_snapshot.setRpms(package, difference)
+		for package in list(set(self._builds.keys()) & set(builds.keys())):
+			if self._builds[package]["build"] != builds[package]["build"]:
+				diff_snapshot.setRpms(package, self._builds[package]["build"], self._builds[package]["rpms"])
 
+		# Assuming no package get ever removed (even if retired)
 		return diff_snapshot
