@@ -95,3 +95,15 @@ class Rpm(object):
 		# https://kojipkgs.fedoraproject.org//packages/etcd/2.2.4/2.fc24/x86_64/etcd-unit-test-2.2.4-2.fc24.x86_64.rpm
 		# https://kojipkgs.fedoraproject.org//packages/etcd/2.2.4/2.fc24/src/etcd-2.2.4-2.fc24.src.rpm
 		return "https://kojipkgs.fedoraproject.org/packages/%s/%s/%s/%s/%s" % (self.b_name, self.b_version, self.b_release, self._arch, self.rpm)
+
+class GolangRpm(Rpm):
+
+	def isDevel(self):
+		return self.name().endswith("devel")
+
+
+	def isUnitTest(self):
+		return self.name().endswith("unit-test") or self.name().endswith("unit-test-devel")
+
+	def provideSourceCode(self):
+		return self.isDevel() or self.isUnitTest()
