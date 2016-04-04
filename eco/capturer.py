@@ -35,7 +35,7 @@ class EcoCapturer(object):
 		for distribution in distributions:
 			logging.info("Scanning %s:%s..." % (distribution["product"], distribution["version"]))
 			snapshot = DistributionSnapshot(distribution)
-			counter = 0
+
 			for package in packages.keys() + custom_packages:
 				# filter out all packages not in targeted distribution
 				# custom package inherits all available branches
@@ -59,10 +59,6 @@ class EcoCapturer(object):
 					continue
 
 				snapshot.setRpms(package, data["name"], data["rpms"])
-
-				counter = counter + 1
-				if counter > 3:
-					break
 
 			snapshot_key = "%s:%s" % (distribution["product"], distribution["version"])
 			self._snapshots[snapshot_key] = {"snapshot": snapshot, "distribution": distribution}
