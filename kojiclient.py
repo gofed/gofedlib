@@ -1,6 +1,7 @@
 import koji
 import json
 from utils import getScriptDir
+import time
 
 class KojiClient(object):
 	"""Class encapsulating communication with Koji.
@@ -31,6 +32,35 @@ class KojiClient(object):
 			"name": build,
 			"rpms": rpms
 		}
+
+	def getPackageBuilds(self, distribution, package, since = 0, to = int(time.time()) + 86400):
+		koji_builds = self.session.queryHistory(package=package)["tag_listing"]
+
+		build_id_set = set([x['build_id'] for x in koji_builds if distribution in x['tag.name']])
+
+		builds = {}
+		for build_id in build_id_set:
+			build_info = self.session.getBuild(build_id)
+
+			bdate_ts = int(build_info["completion_ts"])
+
+			if bdate_ts < since or bdate_ts > to:
+				continue
+
+			build_rpms = self.session.listRPMs(build_id)
+
+			build = {
+				"id": build_id,
+				"build_date": bdate_ts,
+				"author": build_info["owner_name"],
+				"name": build_info["nvr"],
+				"architectures": list(set([x['arch']for x in build_rpms])),
+				"rpms": map(lambda rpm: "%s.%s.rpm" % (rpm['nvr'], rpm['arch']), build_rpms)
+			}
+
+			builds[build_info["nvr"]] = build
+
+		return builds
 
 class FakeKojiClient(object):
 
