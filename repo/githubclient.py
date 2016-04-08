@@ -1,10 +1,9 @@
 from github import Github, GithubException
-from gitdb.exc import BadObject
 import time
 import datetime
 
 
-class GitGithubClient(object):
+class GithubClient(object):
 
 	def __init__(self, username, project):
 		self.github = Github()
@@ -40,7 +39,7 @@ class GitGithubClient(object):
 			"message": commit.commit.message
 		}
 
-	def commits(self, branch, since = 0, to = datetime.datetime.now() + datetime.timedelta(hours=24)):
+	def commits(self, branch, since=0, to=int(time.time()) + 86400):
 		"""For given branch return a list of commits.
 		Each commit contains basic information about itself.
 
@@ -58,7 +57,8 @@ class GitGithubClient(object):
 
 		commits = {}
 		since_dt = datetime.datetime.fromtimestamp(since)
-		for commit in self.repo.get_commits(sha = branch, since = since_dt, until = to):
+		to_dt = datetime.datetime.fromtimestamp(to)
+		for commit in self.repo.get_commits(sha=branch, since=since_dt, until=to_dt):
 			commits[commit.sha] = self._commitData(commit)
 		return commits
 
@@ -72,5 +72,5 @@ class GitGithubClient(object):
 		"""
 		try:
 			return self._commitData(self.repo.get_commit(commit))
-		except (ValueError, KeyError, BadObject):
+		except (ValueError, KeyError, GithubException):
 			raise KeyError("Commit %s not found" % commit)
