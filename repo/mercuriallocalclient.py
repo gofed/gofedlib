@@ -43,7 +43,7 @@ class MercurialLocalClient(object):
 			"message": desc
 		}
 
-	def commits(self, branch, since = 0, to = time.mktime((datetime.date.today() + datetime.timedelta(hours=24)).timetuple())):
+	def commits(self, branch, since = 0, to = int(time.time()) + 86400):
 		"""For given branch return a list of commits.
 		Each commit contains basic information about itself.
 
