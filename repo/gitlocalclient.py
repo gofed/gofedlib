@@ -1,29 +1,8 @@
-#
-# All communication with github.com, its remote positories
-# or local ones will be carried through this module and alike.
-#
-# In order to provide replaceable clients (e.g. to switch between
-# local and remote repositories) the module will provide various
-# classes with the same interface (or with the same subset).
-#
-# Carried operations:
-# - get basic info about repository
-# - get a list of branches
-# - get a list of commits
-# - get info about a commit
-
 import git
 from gitdb.exc import BadObject
 import time
 import datetime
 
-class GitClient(object):
-
-	def __init__(self, username, project):
-		self.username = username
-		self.project = project
-
-	#def branches(self):
 
 class GitLocalClient(object):
 
@@ -63,7 +42,7 @@ class GitLocalClient(object):
 		}
 
 	# http://stackoverflow.com/questions/9637838/convert-string-date-to-timestamp-in-python
-	def commits(self, branch, since = 0, to = time.mktime((datetime.date.today() + datetime.timedelta(hours=24)).timetuple())):
+	def commits(self, branch, since = 0, to = int(time.time()) + 86400):
 		"""For given branch return a list of commits.
 		Each commit contains basic information about itself.
 
@@ -100,13 +79,3 @@ class GitLocalClient(object):
 			return self._commitData(self.repo.commit(commit))
 		except (ValueError, KeyError, BadObject):
 			raise KeyError("Commit %s not found" % commit)
-
-
-if __name__ == "__main__":
-	#client = GitLocalClient("/home/jchaloup/Packages/golang-github-abbot-go-http-auth/upstream/go-http-auth")
-	client = GitLocalClient("/home/jchaloup/Packages/etcd/upstream/etcd")
-	print client.branches()
-	#print ""
-	#print len(client.commits("release-2.3").keys())
-	print ""
-	print client.commit("5e6eb7e19d6385adfabb1f1caea03e732f9348ad")
