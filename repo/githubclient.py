@@ -2,7 +2,6 @@ from github import Github, GithubException
 import time
 import datetime
 
-
 class GithubClient(object):
 
 	def __init__(self, username, project):

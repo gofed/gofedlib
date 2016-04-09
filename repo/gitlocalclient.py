@@ -3,7 +3,6 @@ from gitdb.exc import BadObject
 import time
 import datetime
 
-
 class GitLocalClient(object):
 
 	def __init__(self, repo_directory):

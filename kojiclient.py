@@ -51,7 +51,7 @@ class KojiClient(object):
 
 			build = {
 				"id": build_id,
-				"build_date": bdate_ts,
+				"build_ts": bdate_ts,
 				"author": build_info["owner_name"],
 				"name": build_info["nvr"],
 				"architectures": list(set([x['arch']for x in build_rpms])),
