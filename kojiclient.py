@@ -2,6 +2,7 @@ import koji
 import json
 from utils import getScriptDir
 import time
+import datetime
 
 class KojiClient(object):
 	"""Class encapsulating communication with Koji.
@@ -20,6 +21,7 @@ class KojiClient(object):
 			raise KeyError("No build found for '%s' package" % package)
 
 		build = "%s-%s-%s" % (data[1][0]["package_name"], data[1][0]["version"], data[1][0]["release"])
+		build_ts = 0
 		rpms = []
 		for rpm in data[0]:
 			rpm_obj = {
@@ -27,9 +29,11 @@ class KojiClient(object):
 			}
 
 			rpms.append(rpm_obj)
+			build_ts = max(build_ts, int(rpm["buildtime"]))
 
 		return {
 			"name": build,
+			"build_ts": build_ts,
 			"rpms": rpms
 		}
 

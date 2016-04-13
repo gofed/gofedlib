@@ -38,17 +38,18 @@ class DistributionSnapshot(object):
 	def distribution(self):
 		return self._distribution
 
-	def setRpms(self, package, build, rpms):
+	def setRpms(self, package, build, build_ts, rpms):
 		"""Add/Update package rpm
 		"""
-		self._builds[package] = {"build": build, "rpms": rpms}
+		self._builds[package] = {"build": build, "build_ts": build_ts, "rpms": rpms}
+		print {"build": build, "build_ts": build_ts, "rpms": rpms}
 
 	def clone(self):
 		"""Clone (deepcopy) snapshot
 		"""
 		snapshot = DistributionSnapshot(self.distribution(), self.go_version)
 		for package in self.builds:
-			snapshot.setRpms(package, self.builds[package]["build"], self.builds[package]["rpms"])
+			snapshot.setRpms(package, self.builds[package]["build"], self.builds[package]["build_ts"], self.builds[package]["rpms"])
 
 		return snapshot
 
@@ -58,6 +59,7 @@ class DistributionSnapshot(object):
 			builds.append({
 				"name": package,
 				"build": self._builds[package]["build"],
+				"build_ts": self._builds[package]["build_ts"],
 				"rpms": map(lambda l: l["name"], self._builds[package]["rpms"])
 			})
 
@@ -75,7 +77,7 @@ class DistributionSnapshot(object):
 
 		builds = {}
 		for build in data["builds"]:
-			builds[build["name"]] = {"build": build["build"], "rpms": build["rpms"]}
+			builds[build["name"]] = {"build": build["build"], "build_ts": build["build_ts"], "rpms": build["rpms"]}
 
 		self._builds = builds
 
@@ -105,11 +107,11 @@ class DistributionSnapshot(object):
 		diff_snapshot = DistributionSnapshot(self.distribution(), self.go_version)
 
 		for package in list(set(self._builds.keys()) - set(builds.keys())):
-			diff_snapshot.setRpms(package, self._builds[package]["build"], self._builds[package]["rpms"])
+			diff_snapshot.setRpms(package, self._builds[package]["build"], self._builds[package]["build_ts"], self._builds[package]["rpms"])
 
 		for package in list(set(self._builds.keys()) & set(builds.keys())):
 			if self._builds[package]["build"] != builds[package]["build"]:
-				diff_snapshot.setRpms(package, self._builds[package]["build"], self._builds[package]["rpms"])
+				diff_snapshot.setRpms(package, self._builds[package]["build"], self._builds[package]["build_ts"], self._builds[package]["rpms"])
 
 		# Assuming no package get ever removed (even if retired)
 		return diff_snapshot

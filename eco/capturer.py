@@ -58,7 +58,7 @@ class EcoCapturer(object):
 					logging.error(e)
 					continue
 
-				snapshot.setRpms(package, data["name"], data["rpms"])
+				snapshot.setRpms(package, data["name"], data["build_ts"], data["rpms"])
 
 			snapshot_key = "%s:%s" % (distribution["product"], distribution["version"])
 			self._snapshots[snapshot_key] = {"snapshot": snapshot, "distribution": distribution}
