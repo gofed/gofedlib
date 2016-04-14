@@ -23,6 +23,15 @@ class BodhiClient(object):
 	def createNewPackageUpdate(self, builds, notes, bugs):
 		return self.createUpdate(builds, notes, bugs, type="newpackage")
 
+	def createOverride(self, build, duration = 21, notes = "Override"):
+		try:
+			self.bodhi.save_override(build, duration, notes)
+		except BodhiClientException as e:
+			logging.error(e)
+			return False
+
+		return True
+
 # Example
 # bodhi.save(builds="golang-googlecode-uuid-0-0.8.gitca53cad.fc24", type="enhancement", notes="Update", bugs="1250523", edited="golang-googlecode-uuid-0-0.8.gitca53cad.fc24")
 #
