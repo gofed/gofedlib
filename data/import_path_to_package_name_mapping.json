@@ -5,6 +5,7 @@
 {"ipprefix": "github.com/coreos/etcd","package":"etcd"},
 {"ipprefix": "github.com/coreos/fleet","package":"fleet"},
 {"ipprefix": "github.com/golang/crypto","package":"golang-googlecode-crypto"},
+{"ipprefix": "github.com/pborman/uuid","package":"golang-googlecode-uuid"},
 {"ipprefix": "code.google.com/p/google-api-go-client","package":"golang-googlecode-google-api-client"},
 {"ipprefix": "code.google.com/p/go.net","package":"golang-googlecode-net"},
 {"ipprefix": "code.google.com/p/go-uuid","package":"golang-googlecode-uuid"},
