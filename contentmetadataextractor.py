@@ -83,7 +83,10 @@ class ContentMetadataExtractor(object):
 		self._nodes = {}
 		deps_dirs = []
 
-		for dirName, subdirList, fileList in os.walk(self.source_code_directory):
+		def _handleOsWalk(err):
+			raise OSError(err)
+
+		for dirName, subdirList, fileList in os.walk(self.source_code_directory, onerror = _handleOsWalk):
 			dir = dirName[root_dir_len:]
 
 			if subdirList != [] and self._detectDepsDirectory(subdirList) > 0:
@@ -165,7 +168,6 @@ class ContentMetadataExtractor(object):
 
 		self.docs = map(lambda l: l[1:], docs)
 		self.non_go_directories = map(lambda l: l[1:], non_go_directories)
-
 
 	def getDepsDirectories(self):
 		return self._deps_dirs
