@@ -90,6 +90,7 @@ class PkgDBClient(object):
 			if response.status_code != requests.codes.ok:
 				continue
 
+			data = response.json()
 			for package in data["packages"]:
 				packages[package["name"]] = self._processPackageData(package)
 
