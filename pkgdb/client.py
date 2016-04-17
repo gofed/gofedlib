@@ -66,6 +66,33 @@ class PkgDBClient(object):
 			"creation_date": data["creation_date"]
 		}
 
+	def getCollections(self):
+		url = "%s/collections" % self.base_url
+		response = requests.get(url)
+		if response.status_code != requests.codes.ok:
+			return {}
+
+		data = response.json()
+		if data["output"] != "ok":
+			logging.error("Unable to get PkgDB collections")
+			return {}
+
+		collections = {}
+		for collection in data["collections"]:
+			if collection["status"] not in  ["Active", "Under Development"]:
+				continue
+
+			if collection["name"] not in collections:
+				collections[ collection["name"] ] = {}
+
+
+			if collection["koji_name"] not in collections[ collection["name"] ]:
+				collections[ collection["name"] ][ collection["koji_name"] ] = {}
+
+			collections[ collection["name"] ][ collection["koji_name"] ] = {"dist_tag": collection["dist_tag"][1:]}
+
+		return collections
+
 	def getGolangPackages(self):
 		"""Get a list of all golang packages for all available branches
 		"""
