@@ -40,7 +40,8 @@ class KojiClient(object):
 	def getPackageBuilds(self, distribution, package, since = 0, to = int(time.time()) + 86400):
 		koji_builds = self.session.queryHistory(package=package)["tag_listing"]
 
-		build_id_set = set([x['build_id'] for x in koji_builds if distribution in x['tag.name']])
+		# TODO(jchaloup): instead of passing distribution (dist_name), pass tag name and test for tag.name
+		build_id_set = set([x['build_id'] for x in koji_builds if x['release'].endswith(distribution) ])
 
 		builds = {}
 		for build_id in build_id_set:
