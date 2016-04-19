@@ -1,3 +1,5 @@
+# TODO(jchaloup): move the definitions to corresponding classes
+
 class CommitNotRetrieved(Exception):
 	pass
 

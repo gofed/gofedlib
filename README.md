@@ -8,6 +8,14 @@ Covered areas:
 - dependency graph analysis (detection of cyclic dependencies)
 - ecosystem scanning (new packages, new commits in upstream repositories, new builds in distribution builder)
 
+## Repository structure
+
+* distribution (Koji, Bodhi, PkgDB, etc.)
+* go (go symbols extractors, api diff, go project info, etc.)
+* repositories (Git, Mercurial, Github.com, Bitbucket.com clients)
+* urlbuilder (Github/Bitbucket source code tarball, rpm build, etc.)
+* graphs (SCCs, subgraphs, graph transposition, etc.)
+
 ## How to install
 
 There are two ways:

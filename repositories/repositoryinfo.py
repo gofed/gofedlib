@@ -48,6 +48,28 @@ class ArchiveInfo(object):
 	def archive_url(self, value):
 		self._archive_url = value
 
+# TODO(jchaloup): replace ipparser with a generic url parser
+# so it can be applied not just to golang import paths but to a general repository url
+#
+# TODO(jchaloup): decompose the code to GithubRepositoryInfo and BitbucketRepositoryInfo
+# then build RepositoryInfo over it which get instantiated based on provider signature
+# that comes from generic url parser
+#
+# GitRepoInfo:
+# - latest commit
+# - tags, labels
+#
+# GithubInfo
+# - releases
+# - archive info (tarball name, url)
+# 
+# Proposed classes:
+# git:
+# - GitRepositoryInfo,
+# - GithubRepositoryInfo
+# hg:
+# - MercurialRepositoryInfo
+# - BitbucketRepositoryInfo
 
 class RepositoryInfo:
 	"""Based on given import path and commit (optional) retrieve information
@@ -76,9 +98,6 @@ class RepositoryInfo:
 
 	def getCommit(self):
 		return self.commit
-
-	def getImportPathInfo(self):
-		return self.ip_obj
 
 	def getArchiveInfo(self):
 		return self.archive_info

@@ -9,6 +9,11 @@ GOLANGORG = 4
 GOPKG = 5
 BITBUCKET = 6
 
+# TODO(jchaloup): decompose the parser into generic UrlParser and GoImportPathParser
+# so the generic one can be used to generate provider/repository signatures
+# and the go one to interpret paths as go packages (e.g. what package is Native, what is prefix, tc.)
+# Among other things distinguish go package name generator
+
 class ImportPathParser(object):
 	"""
 	Parses information from given

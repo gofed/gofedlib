@@ -61,3 +61,9 @@ class Snapshot(object):
 		self._packages = packages
 
 		return self
+
+	def readGLOGFILE(self, file):
+		raise NotImplementedError()
+		with open(file, "r") as f:
+			data = json.load(f)
+
