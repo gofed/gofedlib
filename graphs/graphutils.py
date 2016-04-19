@@ -3,7 +3,7 @@ import operator
 
 class Graph(object):
 
-	def __init__(self, nodes = [], edges = {}):
+	def __init__(self, nodes = set([]), edges = {}):
 		self._nodes = nodes
 		self._edges = edges
 
@@ -29,9 +29,9 @@ class GraphUtils(object):
 		adj_list = {}
 		for (a, b) in edges:
 			try:
-				adj_list[a].append(b)
+				adj_list[a].add(b)
 			except KeyError:
-				adj_list[a] = [b]
+				adj_list[a] = set([b])
 
 		return adj_list
 
@@ -45,9 +45,9 @@ class GraphUtils(object):
 			for v in edges[u]:
 				# (u,v) -> (v,u)
 				if v not in tedges:
-					tedges[v] = [u]
+					tedges[v] = set([u])
 				else:
-					tedges[v].append(u)
+					tedges[v].add(u)
 
 		return Graph(nodes, tedges)
 
@@ -56,12 +56,12 @@ class GraphUtils(object):
 		nodes = graph.nodes()
 		edges = graph.edges()
 
-		leaves = []
+		leaves = set([])
 
 		for u in nodes:
 			# u has no edges or edges[u] is empty
 			if u not in edges or edges[u] == []:
-				leaves.append(u)
+				leaves.add(u)
 
 		return leaves
 
@@ -79,10 +79,10 @@ class GraphUtils(object):
 				for v in edges[u]:
 					visited[v] = 1
 
-		roots = []
+		roots = set([])
 		for u in nodes:
 			if visited[u] == 0:
-				roots.append(u)
+				roots.add(u)
 
 		return roots
 
@@ -94,7 +94,7 @@ class GraphUtils(object):
 
 		for u in g2.nodes():
 			if u not in nodes:
-				nodes.append(u)
+				nodes.add(u)
 
 			if u not in g2_edges:
 				continue
@@ -103,9 +103,9 @@ class GraphUtils(object):
 				if u in edges:
 					if v in edges[u]:
 						continue
-					edges[u].append(v)
+					edges[u].add(v)
 				else:
-					edges[u] = [v]
+					edges[u] = set([v])
 
 		return Graph(nodes, edges)
 
@@ -125,10 +125,10 @@ class GraphUtils(object):
 			if u not in edges:
 				continue
 
-			r_edges[u] = []
+			r_edges[u] = set([])
 			for v in edges[u]:
 				if v in reacheable:
-					r_edges[u].append(v)
+					r_edges[u].add(v)
 
 		return Graph(reacheable, r_edges)
 
@@ -147,7 +147,7 @@ class SCCBuilder(object):
 
 	def __init__(self, graph):
 		self._graph = graph
-		self._sccs = []
+		self._sccs = set([])
 
 	def getSCC(self):
 		return self._sccs
@@ -165,6 +165,7 @@ class SCCBuilder(object):
 		# some trees can overlap
 		sccs = []
 		for i_tree in trees:
+			# iss = is subset
 			iss = False
 			for j_tree in trees:
 				if i_tree == j_tree:
@@ -172,9 +173,17 @@ class SCCBuilder(object):
 				if set(i_tree).issubset(j_tree):
 					iss = True
 			if iss == False:
-				sccs.append(i_tree)
+				# if the scc has one node and there is no edge
+				# skip it
+				if len(i_tree) == 1:
+					if i_tree[0] not in edges:
+						continue
+					if i_tree[0] not in edges[i_tree[0]]:
+						continue
+
+				sccs.append(frozenset(i_tree))
 	
-		self._sccs = sccs
+		self._sccs = set(sccs)
 
 		return self
 
@@ -224,10 +233,10 @@ class DFS:
 		self.time = 0
 		self.DFSVisit(start_node)
 
-		reachable = []		
+		reachable = set([])
 		for node in self.nodes:
 			if self.color[node] != self.WHITE:
-				reachable.append(node)
+				reachable.add(node)
 
 		return reachable
 
