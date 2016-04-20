@@ -1,5 +1,6 @@
 import unittest
 import json
+import os
 from goimportpathparser import GoImportPathParser
 
 class GoImportPathParserTest(unittest.TestCase):
@@ -128,10 +129,14 @@ class GoImportPathParserTest(unittest.TestCase):
 			"native": False
 		}]
 
-		with open("data/known_prefixes.json", "r") as f:
+		script_dir = os.path.dirname(os.path.realpath(__file__))
+		prefixes_file = os.path.join(script_dir, "data/known_prefixes.json")
+		packages_file = os.path.join(script_dir, "data/native_packages.json")
+
+		with open(prefixes_file, "r") as f:
 			regexs = json.load(f)
 
-		with open("data/native_packages.json", "r") as f:
+		with open(packages_file, "r") as f:
 			native = json.load(f)
 
 		p = GoImportPathParser(regexs, native)

@@ -1,5 +1,6 @@
 import unittest
 import json
+import os
 from upstreamprovider import UpstreamProvider
 
 class UpstreamProviderTest(unittest.TestCase):
@@ -53,7 +54,8 @@ class UpstreamProviderTest(unittest.TestCase):
 			"signature": {"provider": "gopkg", "username": "natefinch", "project": "lumberjack", "version": "v1"}
 		}]
 
-		with open("import_path_to_provider_prefix_mapping.json", "r") as f:
+		mapping_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "import_path_to_provider_prefix_mapping.json")
+		with open(mapping_file, "r") as f:
 			ip2pp = json.load(f)
 
 		p = UpstreamProvider([])
