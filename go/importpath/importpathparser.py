@@ -14,6 +14,16 @@ BITBUCKET = 6
 # and the go one to interpret paths as go packages (e.g. what package is Native, what is prefix, tc.)
 # Among other things distinguish go package name generator
 
+# Three use cases for import paths
+# 1. get project source code repository url
+# 2. decompose import paths into classes (get ipprefix)
+# 3. generate package name for project
+
+# For the first I just need ip2pp mapping and ipprefix.
+# For the second case I need a list of native import paths and ipprefix.
+# For the third I just need ipprefix (it is not repository related)
+#
+
 class ImportPathParser(object):
 	"""
 	Parses information from given
