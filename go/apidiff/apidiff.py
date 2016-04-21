@@ -24,7 +24,7 @@ class GoApiDiff(object):
 	Output:
 
 	Algorithm:
-	- both APIs must be of the same project
+	- |api2 - api1|
 	"""
 
 	def __init__(self, api1, api2):
