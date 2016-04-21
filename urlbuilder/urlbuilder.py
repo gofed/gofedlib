@@ -5,7 +5,7 @@
 # - upstream repository clone url (github.com, bitbucket.org)
 #
 
-from gofed_lib.helpers import Build, Rpm
+from gofed_lib.distribution.helpers import Build, Rpm
 
 class UrlBuilder(object):
 
@@ -38,10 +38,3 @@ class UrlBuilder(object):
 		else:
 			raise ValueError("Product '%s' not suppored" % product)
 
-if __name__ == "__main__":
-	b = UrlBuilder()
-	print b.buildGithubSourceCodeTarball("coreos", "etcd", "4041bbe571432b6bc4bdd0a5408d55aba545b040")
-	print b.buildGithubRepository("coreos", "etcd")
-	print b.buildBitbucketRepository("ww", "goautoneg")
-	print b.buildKojiRpm("Fedora", "etcd-2.3.1-1.fc25", "etcd-devel-2.3.1-1.fc25.noarch.rpm")
-	print b.buildKojiRpm("Fedora", "etcd-2.3.1-1.fc25", "etcd-unit-test-2.3.1-1.fc25.armv7hl.rpm")
