@@ -1,6 +1,6 @@
-from goimportpathparser import GoImportPathParser
+from importpathparser import ImportPathParser
 import json
-from utils import getScriptDir
+from lib.utils import getScriptDir
 
 # TODO(jchaloup):
 # - introduce buildDefault() and make it configurable
@@ -12,7 +12,7 @@ class ImportPathParserBuilder(object):
 		with open("%s/data/known_prefixes.json" % getScriptDir(__file__), "r") as f:
 			regexs = json.load(f)
 
-		with open("%s/data/native_packages.json" % % getScriptDir(__file__), "r") as f:
+		with open("%s/data/native_packages.json" % getScriptDir(__file__), "r") as f:
 			native = json.load(f)
 
 

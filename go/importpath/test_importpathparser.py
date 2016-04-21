@@ -2,6 +2,7 @@ import unittest
 import json
 import os
 from importpathparser import ImportPathParser
+from lib.utils import getScriptDir
 
 class ImportPathParserTest(unittest.TestCase):
 
@@ -129,7 +130,7 @@ class ImportPathParserTest(unittest.TestCase):
 			"native": False
 		}]
 
-		script_dir = os.path.dirname(os.path.realpath(__file__))
+		script_dir = getScriptDir(__file__)
 		prefixes_file = os.path.join(script_dir, "data/known_prefixes.json")
 		packages_file = os.path.join(script_dir, "data/native_packages.json")
 

@@ -1,5 +1,5 @@
-from importpathparserbuilder import ImportPathParserBuilder
-from importpathsdecomposer import ImportPathsDecomposer
+from .importpathparserbuilder import ImportPathParserBuilder
+from .importpathsdecomposer import ImportPathsDecomposer
 
 class ImportPathsDecomposerBuilder(object):
 

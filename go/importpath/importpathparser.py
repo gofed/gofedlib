@@ -1,4 +1,3 @@
-import json
 import re
 
 class ImportPathParser(object):
@@ -36,7 +35,7 @@ class ImportPathParser(object):
 		url = re.sub(r'https://', '', url)
 
 		# is import path native package?
-		if importpath.split('/')[0] in self.native_packages:
+		if importpath.split('/')[0] in self.native_packages["packages"]:
 			self.native = True
 			return self
 
@@ -48,7 +47,7 @@ class ImportPathParser(object):
 					self._package = match.group(3)
 				return self
 
-		raise ValueError("Import path prefix not recognized")
+		raise ValueError("Import path prefix for '%s' not recognized" % importpath)
 
 	def isNative(self):
 		return self.native
@@ -59,15 +58,3 @@ class ImportPathParser(object):
 	def package(self):
 		return self._package
 
-if __name__ == "__main__":
-
-	with open("data/known_prefixes.json", "r") as f:
-		regexs = json.load(f)
-
-	with open("data/native_packages.json", "r") as f:
-		native = json.load(f)
-
-	p = ImportPathParser(regexs, native)
-	p.parse("gopkg.in/v1/gcfg/scanner")
-	print p.prefix()
-	print p.package()

@@ -1,15 +1,17 @@
+import logging
+
 class ImportPathsDecomposer:
 
 	def __init__(self, ipparser):
 		self.ipparser = ipparser
 
-		self.classes = {}
+		self._classes = {}
 
-	def getClasses(self):
-		return self.classes
+	def classes(self):
+		return self._classes
 
 	def decompose(self, importpaths):
-		self.classes = {}
+		self._classes = {}
 		for path in importpaths:
 			try:
 				self.ipparser.parse(path)
@@ -20,11 +22,11 @@ class ImportPathsDecomposer:
 				if self.ipparser.isNative():
 					key = "Native"
 				else:
-					key = self.ipparser.getPrefix()
+					key = self.ipparser.prefix()
 
-			if key not in self.classes:
-				self.classes[key] = [path]
+			if key not in self._classes:
+				self._classes[key] = [path]
 			else:
-				self.classes[key].append(path)
+				self._classes[key].append(path)
 
 		return True
