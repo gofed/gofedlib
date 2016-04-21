@@ -1,4 +1,3 @@
-import json
 import re
 
 class PackageNameGenerator(object):
@@ -62,13 +61,3 @@ class PackageNameGenerator(object):
 	def name(self):
 		return self._name
 
-if __name__ == "__main__":
-	with open("import_path_to_package_name_mapping.json", "r") as f:
-		mapping = json.load(f)
-
-	g = PackageNameGenerator(mapping)
-
-	print g.generate("gopkg.in/check.v1").name()
-	g.generate("github.com/coreos/etcd")
-	g.generate("gopkg.in/v1/check")
-	g.generate("gopkg.in/natefinch/lumberjack.v1")

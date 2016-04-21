@@ -1,7 +1,6 @@
 import unittest
-from packagenamegenerator import PackageNameGenerator
-import json
-import os
+from .packagenamegeneratorbuilder import PackageNameGeneratorBuilder
+from .packagenamegenerator import PackageNameGenerator
 
 class PackageNameGeneratorTest(unittest.TestCase):
 
@@ -49,13 +48,7 @@ class PackageNameGeneratorTest(unittest.TestCase):
 		for project in projects:
 			self.assertEqual(g.generate(project["project"]).name(), project["name"])
 
-		script_dir = os.path.dirname(os.path.realpath(__file__))
-		mapping_file = os.path.join(script_dir, "import_path_to_package_name_mapping.json")
-
-		with open(mapping_file, "r") as f:
-			mapping = json.load(f)
-
-		g = PackageNameGenerator(mapping)
+		g = PackageNameGeneratorBuilder().buildWithLocalMapping()
 		for project in projects:
 			self.assertEqual(g.generate(project["project"]).name(), project["mname"])
 

@@ -1,5 +1,5 @@
 import json
-from utils import getScriptDir
+from lib.utils import getScriptDir
 
 class PackageManager(object):
 

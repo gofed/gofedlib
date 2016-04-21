@@ -1,4 +1,5 @@
 import re
+from lib.types import UnsupportedImportPathError
 
 UNKNOWN = 0
 GITHUB = 1
@@ -10,7 +11,7 @@ BITBUCKET = 6
 
 class UpstreamProvider(object):
 
-	def __init__(self, ip2pp_mapping):
+	def __init__(self, ip2pp_mapping = []):
 		self.ip2pp_mapping = ip2pp_mapping
 
 		self._prefix = ""

@@ -1,5 +1,5 @@
 import unittest
-from distributionnameparser import DistributionNameParser
+from .distributionnameparser import DistributionNameParser
 
 class DistributionNameParserTest(unittest.TestCase):
 

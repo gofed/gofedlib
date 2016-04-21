@@ -1,9 +1,9 @@
 import unittest
 import json
 import os
-from goimportpathparser import GoImportPathParser
+from importpathparser import ImportPathParser
 
-class GoImportPathParserTest(unittest.TestCase):
+class ImportPathParserTest(unittest.TestCase):
 
 	def test(self):
 
@@ -139,7 +139,7 @@ class GoImportPathParserTest(unittest.TestCase):
 		with open(packages_file, "r") as f:
 			native = json.load(f)
 
-		p = GoImportPathParser(regexs, native)
+		p = ImportPathParser(regexs, native)
 
 		for path in paths:
 			p.parse(path["path"])
