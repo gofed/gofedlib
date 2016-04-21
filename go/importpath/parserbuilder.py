@@ -1,4 +1,4 @@
-from importpathparser import ImportPathParser
+from .parser import ImportPathParser
 import json
 from lib.utils import getScriptDir
 

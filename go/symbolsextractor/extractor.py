@@ -1,23 +1,10 @@
 import os
 import logging
 import json
-from utils import getScriptDir, runCommand
-from coder import GoTypeCoder
-from contentmetadataextractor import ContentMetadataExtractor
-from .types import ExtractionError
-
-CONFIG_SOURCE_CODE_DIRECTORY = "resource"
-DATA_COMMIT = "commit"
-
-def api(source_code_directory):
-	obj = GoSymbolsExtractor(source_code_directory)
-	obj.extract()
-	return obj.getProjectExportedAPI()
-
-def project_packages(source_code_directory):
-	obj = GoSymbolsExtractor(source_code_directory)
-	obj.extract()
-	return obj.getProjectPackages()
+from lib.utils import getScriptDir, runCommand
+from .coder import GoTypeCoder
+from ..contentmetadataextractor import ContentMetadataExtractor
+from lib.types import ExtractionError
 
 class GoSymbolsExtractor(object):
 	"""
@@ -77,10 +64,17 @@ class GoSymbolsExtractor(object):
 			return os.path.dirname(filepath) == packagepath
 
 		return os.path.dirname(filepath) == ""
+
 	def _normalizePath(self, path):
 		return path[1:] if path[0] == "/" else path
 
-	def getProjectPackages(self):
+	def packages(self):
+		return self._getProjectPackages()
+
+	def exportedApi(self):
+		return self._getProjectExportedAPI()
+
+	def _getProjectPackages(self):
 		data = {}
 
 		# package imports
@@ -145,7 +139,7 @@ class GoSymbolsExtractor(object):
 
 		return data
 
-	def getProjectExportedAPI(self):
+	def _getProjectExportedAPI(self):
 		packages = []
 		for key in self.symbols:
 			package = {}
@@ -356,3 +350,4 @@ class GoSymbolsExtractor(object):
 		self.main_packages = main_packages
 		self.main_package_deps = main_package_deps
 
+		return self

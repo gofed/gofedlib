@@ -1,7 +1,7 @@
 import unittest
 import json
 import os
-from importpathparser import ImportPathParser
+from .parser import ImportPathParser
 from lib.utils import getScriptDir
 
 class ImportPathParserTest(unittest.TestCase):

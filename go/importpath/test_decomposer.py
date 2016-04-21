@@ -1,5 +1,5 @@
 import unittest
-from .importpathsdecomposerbuilder import ImportPathsDecomposerBuilder
+from .decomposerbuilder import ImportPathsDecomposerBuilder
 
 class ImportPathsDecomposerTest(unittest.TestCase):
 

@@ -1,5 +1,4 @@
-from importpathparserbuilder import ImportPathParserBuilder
-from types import UnsupportedImportPathError
+from .importpath.importpathparserbuilder import ImportPathParserBuilder
 
 class Data2SpecModelData(object):
 	"""Combine various data to provide data for spec model.
@@ -25,7 +24,7 @@ class Data2SpecModelData(object):
 			try:
 				if self.ipparser.parse(dep).isNative():
 					continue
-			except UnsupportedImportPathError:
+			except ValueError:
 				continue
 
 			o_deps.append(dep)
