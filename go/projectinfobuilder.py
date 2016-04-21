@@ -1,5 +1,5 @@
-from importpathparserbuilder import ImportPathParserBuilder
-from projectinfo import ProjectInfo
+from .importpath.parserbuilder import ImportPathParserBuilder
+from .projectinfo import ProjectInfo
 
 class ProjectInfoBuilder(object):
 

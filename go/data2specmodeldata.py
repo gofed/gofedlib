@@ -1,4 +1,4 @@
-from .importpath.importpathparserbuilder import ImportPathParserBuilder
+from .importpath.parserbuilder import ImportPathParserBuilder
 
 class Data2SpecModelData(object):
 	"""Combine various data to provide data for spec model.

@@ -1,5 +1,3 @@
-from types import UnsupportedImportPathError
-
 class ProjectInfo:
 
 	def __init__(self, ipparser):
@@ -90,7 +88,7 @@ class ProjectInfo:
 		for path in occurrences:
 			try:
 				self.ipparser.parse(path)
-			except UnsupportedImportPathError:
+			except ValueError:
 				continue
 
 			if self.ipparser.isNative():
