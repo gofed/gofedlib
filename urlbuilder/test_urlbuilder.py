@@ -17,6 +17,15 @@ class UrlBuilderTest(unittest.TestCase):
 		)
 
 		self.assertEqual(
+			b.buildBitbucketSourceCodeTarball(
+				"ww",
+				"goautoneg",
+				"75cd24fc2f2c2a2088577d12123ddee5f54e0675"
+			),
+			"https://bitbucket.org/ww/goautoneg/get/75cd24fc2f2c.tar.gz"
+		)
+
+		self.assertEqual(
 			b.buildGithubRepository("coreos", "etcd"),
 			"https://github.com/coreos/etcd.git"
 		)

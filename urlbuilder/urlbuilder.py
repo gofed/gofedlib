@@ -16,6 +16,10 @@ class UrlBuilder(object):
 		shortcommit = commit[:7]
 		return "https://github.com/%s/%s/archive/%s/%s-%s.tar.gz" % (username, project, commit, project, shortcommit)
 
+	def buildBitbucketSourceCodeTarball(self, username, project, commit):
+		shortcommit = commit[:12]
+		return "https://bitbucket.org/%s/%s/get/%s.tar.gz" % (username, project, shortcommit)
+
 	def buildGithubRepository(self, username, project, protocol = "https"):
 		if protocol == "https":
 			return "https://github.com/%s/%s.git" % (username, project)
