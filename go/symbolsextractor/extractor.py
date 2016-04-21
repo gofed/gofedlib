@@ -40,7 +40,7 @@ class GoSymbolsExtractor(object):
 		self.imports_only = False
 
 		"""set implicit output"""
-		self.symbols = []
+		self.symbols = {}
                 self.symbols_position = {}
                 # list of packages imported for each project's package
                 self.package_imports = {}

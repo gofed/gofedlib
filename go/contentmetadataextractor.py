@@ -1,5 +1,5 @@
 import os
-from utils import runCommand
+from lib.utils import runCommand
 
 class ContentMetadataExtractor(object):
 
@@ -37,6 +37,7 @@ class ContentMetadataExtractor(object):
 		return doc.lower() in ['license', 'licence', 'license.txt', 'copying', 'copying.txt', 'license.md']
 
 	def _getLicense(self, doc):
+		# TODO(jchaloup): find licence check written in python
 		so, se, rc = runCommand("licensecheck %s" % doc)
 		if rc == 0:
 			return ":".join(so.split("\n")[0].split(":")[1:]).strip()
