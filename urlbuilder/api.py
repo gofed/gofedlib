@@ -1,7 +1,7 @@
 #
 # Call simple functions without knowing who actually provides the url construction algorithm
 #
-from .urlbuilder import UrlBuilder
+from .builder import UrlBuilder
 
 def github_source_code_tarball_url(username, project, commit):
 	return UrlBuilder().buildGithubSourceCodeTarball(username, project, commit)
