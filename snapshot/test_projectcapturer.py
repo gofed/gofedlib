@@ -13,6 +13,8 @@ class ProjectCapturerTest(unittest.TestCase):
 			def latestCommit(self):
 				return fake_commit
 
+		fake_client = FakeClient()
+
 		provider = {
 			"provider": "github",
 			"username": "user",

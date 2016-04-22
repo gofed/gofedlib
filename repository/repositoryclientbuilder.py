@@ -1,7 +1,7 @@
-from .repository.githubclient import GithubClient
-from .repository.bitbucketclient import BitbucketClient
-from .repository.gitlocalclient import GitLocalClient
-from .repository.mercuriallocalclient import MercurialLocalClient
+from .githubclient import GithubClient
+from .bitbucketclient import BitbucketClient
+from .gitlocalclient import GitLocalClient
+from .mercuriallocalclient import MercurialLocalClient
 import os
 
 class RepositoryClientBuilder(object):
