@@ -9,11 +9,11 @@
 
 from .projectgithubrepositorycapturer import ProjectGithubRepositoryCapturer
 from .projectbitbucketrepositorycapturer import ProjectBitbucketRepositoryCapturer
+from lib.repository.repositoryclientbuilder import RepositoryClientBuilder
 
 class ProjectCapturer(object):
 
-	def __init__(self, provider, client = None):
-		self._client = client
+	def __init__(self, provider):
 		self._signature = {}
 		self._provider = provider
 
@@ -36,10 +36,15 @@ class ProjectCapturer(object):
 		"""
 		self._validateProvider(self._provider)
 
+		# get client for repository
+		# TODO(jchaloup): read config file to switch between local and remove clients
+		# TODO(jchaloup): remote client can cover gofed infratructure or any remove source for repository info
+		client = RepositoryClientBuilder().buildWithRemoteClient(self._provider)
+
 		if self._provider["provider"] == "github":
-			self._signature = ProjectGithubRepositoryCapturer(self._provider, self._client).capture(commit).signature()
+			self._signature = ProjectGithubRepositoryCapturer(self._provider, client).capture(commit).signature()
 		elif self._provider["provider"] == "bitbucket":
-			self._signature = ProjectBitbucketRepositoryCapturer(self._provider, self._client).capture(commit).signature()
+			self._signature = ProjectBitbucketRepositoryCapturer(self._provider, client).capture(commit).signature()
 		else:
 			raise KeyError("Provider '%s' not recognized" % self._provider["provider"])
 

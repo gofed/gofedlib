@@ -1,7 +1,7 @@
-from .repo.githubclient import GithubClient
-from .repo.bitbucketclient import BitbucketClient
-from .repo.gitlocalclient import GitLocalClient
-from .repo.mercuriallocalclient import MercurialLocalClient
+from .repository.githubclient import GithubClient
+from .repository.bitbucketclient import BitbucketClient
+from .repository.gitlocalclient import GitLocalClient
+from .repository.mercuriallocalclient import MercurialLocalClient
 import os
 
 class RepositoryClientBuilder(object):
@@ -12,6 +12,7 @@ class RepositoryClientBuilder(object):
 			return GithubClient(repo_info['username'], repo_info['project'])
 		if repo_info['provider'] == 'bitbucket':
 			return BitbucketClient(repo_info['username'], repo_info['project'])
+
 		raise ValueError("Unsupported provider: %s" % repo_info['provider'])
 
 	def buildWithLocalClient(self, repo_info, repository_directory):
