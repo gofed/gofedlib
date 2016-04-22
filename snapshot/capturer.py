@@ -10,17 +10,19 @@
 from .projectgithubrepositorycapturer import ProjectGithubRepositoryCapturer
 from .projectbitbucketrepositorycapturer import ProjectBitbucketRepositoryCapturer
 
-class ProjectCapturer(self):
+class ProjectCapturer(object):
 
-	def __init__(self):
+	def __init__(self, provider, client = None):
+		self._client = client
 		self._signature = {}
+		self._provider = provider
 
 	def _validateProvider(self, provider):
 		# TODO(jchaloup): use JSON Schema for validation
 		if "provider" not in provider:
 			raise ValueError("Missing provider property: %s" % str(provider))
 
-	def capture(provider, commit = ""):
+	def capture(self, commit = ""):
 		"""Capture the current state of a project based on its provider
 
 		Commit is relevant only for upstream providers.
@@ -32,27 +34,17 @@ class ProjectCapturer(self):
 		:param commit: project's original commit
 		:type  commit: string
 		"""
-		self._validateProvider(provider)
+		self._validateProvider(self._provider)
 
-		if provider["provider"] == "github":
-			self._signature = ProjectGithubRepositoryCapturer().capture(provider, commit).signature()
-		elif provider["provider"] == "bitbucket":
-			self._signature = ProjectBitbucketRepositoryCapturer().capture(provider, commit).signature()
+		if self._provider["provider"] == "github":
+			self._signature = ProjectGithubRepositoryCapturer(self._provider, self._client).capture(commit).signature()
+		elif self._provider["provider"] == "bitbucket":
+			self._signature = ProjectBitbucketRepositoryCapturer(self._provider, self._client).capture(commit).signature()
 		else:
-			raise KeyError("Provider '%s' not recognized" % provider["provider"])
+			raise KeyError("Provider '%s' not recognized" % self._provider["provider"])
 
 		return self
 
 	def signature(self):
 		return self._signature
-
-	def _getResource(self, resource_url):
-		try:
-			return urllib2.urlopen(resource_url)
-		except urllib2.URLError as err:
-			msg = "Unable to retrieve resource, url = %s, err = " % (resource_url, err)
-			raise urllib2.URLError(msg)
-		except urllib2.HTTPError as err:
-			msg = "Unable to retrieve resource, url = %s, err = " % (resource_url, err)
-			raise urllib2.HTTPError(msg)
 

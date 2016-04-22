@@ -10,7 +10,10 @@
 # 
 #
 #
-class ProjectSnapshotCapturer(object)
+class ProjectSnapshotCapturer(object):
+
+	def __init__(self, client = None):
+		self._client = client
 
 	def capture(self, provider):
 		"""Generate snapshot's signature
