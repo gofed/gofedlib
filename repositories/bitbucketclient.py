@@ -1,8 +1,9 @@
+# https://confluence.atlassian.com/bitbucket/commits-or-commit-resource-389775478.html
+
 import datetime
 import time
 import json
 import requests
-
 
 class BitbucketClient(object):
 
@@ -26,7 +27,6 @@ class BitbucketClient(object):
 		req_message = 'https://api.bitbucket.org/1.0/repositories/' + self.reponame + '/branches'
 		response_data = self._bitbucketAPIRequest(req_message)
 		return response_data.keys()
-
 
 	def _commitData(self, commit):
 		"""Get data from a commit object
@@ -77,7 +77,6 @@ class BitbucketClient(object):
 			req_message = response_data['next']
 		return commits
 
-
 	def commit(self, commit):
 		"""Get data for a given commit
 
@@ -92,3 +91,13 @@ class BitbucketClient(object):
 			return self._commitData(response_data)
 		except (ValueError, KeyError):
 			raise KeyError("Commit %s not found" % commit)
+
+	def latestCommit(self):
+		req_message = "https://api.bitbucket.org/2.0/repositories/%s/commits/default" % self.reponame
+
+		response_data = self._bitbucketAPIRequest(req_message)
+		for commit in response_data['values']:
+			return self._commitData(commit)
+
+		raise KeyError("Latest commit not found")
+

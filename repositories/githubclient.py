@@ -1,3 +1,5 @@
+# https://developer.github.com/v3/
+
 from github import Github, GithubException
 import time
 import datetime
@@ -73,6 +75,12 @@ class GithubClient(object):
 			return self._commitData(self.repo.get_commit(commit))
 		except (ValueError, KeyError, GithubException):
 			raise KeyError("Commit %s not found" % commit)
+
+	def latestCommit(self):
+		for commit in self.repo.get_commits():
+			return self._commitData(commit)
+
+		raise KeyError("Latest commit not found")
 
 	def _getResource(self, resource_url):
 		try:
