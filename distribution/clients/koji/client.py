@@ -1,6 +1,6 @@
 import koji
 import json
-from utils import getScriptDir
+from lib.utils import getScriptDir
 import time
 import datetime
 
@@ -82,3 +82,32 @@ class FakeKojiClient(object):
 
 	def getLatestRPMS(self, distribution, package):
 		return self.data[package]
+
+	def getPackageBuilds(self, distribution, package, since = 0, to = 0):
+		return {
+			"gofed-0.0.10-3.fc24": {
+				"id": 1,
+				"build_ts": 1,
+				"author": "author",
+				"name": "gofed-0.0.10-3.fc24",
+				"architectures": ["x86_64", "ppc64le"],
+				"rpms": [
+					"gofed-0.0.10-3.fc24.src.rpm",
+					"gofed-0.0.10-3.fc24.x86_64.rpm",
+					"gofed-build-0.0.10-3.fc24.noarch.rpm"
+				]
+			},
+			"gofed-0.0.10-2.fc24": {
+				"id": 1,
+				"build_ts": 1,
+				"author": "author",
+				"name": "gofed-0.0.10-2.fc24",
+				"architectures": ["x86_64", "ppc64le"],
+				"rpms": [
+					"gofed-0.0.10-2.fc24.src.rpm",
+					"gofed-0.0.10-2.fc24.x86_64.rpm",
+					"gofed-build-0.0.10-2.fc24.noarch.rpm"
+				]
+			}
+		}
+
