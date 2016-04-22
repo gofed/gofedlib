@@ -126,7 +126,7 @@ class RepositoryInfo:
 		return self
 
 	def constructArchiveInfo(self, provider, project, repo, commit):
-
+		# TODO(jchaloup): use UrlBuilder to build urls in the capturer
 		if provider == GITHUB:
 			shortcommit = commit[:7]
 			archive = "%s-%s.tar.gz" % (repo, shortcommit)

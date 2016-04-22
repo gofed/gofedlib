@@ -43,6 +43,9 @@ class ProjectCapturer(self):
 
 		return self
 
+	def signature(self):
+		return self._signature
+
 	def _getResource(self, resource_url):
 		try:
 			return urllib2.urlopen(resource_url)

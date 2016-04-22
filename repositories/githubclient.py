@@ -73,3 +73,42 @@ class GithubClient(object):
 			return self._commitData(self.repo.get_commit(commit))
 		except (ValueError, KeyError, GithubException):
 			raise KeyError("Commit %s not found" % commit)
+
+	def _getResource(self, resource_url):
+		try:
+			return urllib2.urlopen(resource_url)
+		except urllib2.URLError as err:
+			msg = "Unable to retrieve resource, url = %s, err = " % (resource_url, err)
+			raise urllib2.URLError(msg)
+		except urllib2.HTTPError as err:
+			msg = "Unable to retrieve resource, url = %s, err = " % (resource_url, err)
+			raise urllib2.HTTPError(msg)
+
+	def getGithubReleases(self,username, project):
+		# TODO(jchaloup): not tested, test!!!
+		resource_url = "https://api.github.com/repos/%s/%s/releases" % (username, project)
+		c_file = self._getResource(resource_url).read()
+
+		# get the latest commit
+		releases = []
+		for release in json.loads(c_file):
+			releases.append(release["tag_name"])
+
+		return releases
+
+	def getGithubTags(self, username, project):
+		# TODO(jchaloup): not tested, test it!!!, e.g. TagsNotRetrieved is not defined
+		resource_url = "https://api.github.com/repos/%s/%s/tags" % (username, project)
+		c_file = self._getResource(resource_url).read()
+
+		data = json.loads(c_file)
+		if type(data) == {} and "message" in data:
+			raise TagsNotRetrieved("Unable to retrieve tags: %s" % data["message"])
+
+		# get the latest commit
+		tags = []
+		for tag in data:
+			tags.append(tag["name"])
+
+		return tags
+
