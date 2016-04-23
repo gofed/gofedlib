@@ -1,7 +1,7 @@
 import requests
 import logging
 import json
-from ..utils import getScriptDir
+from lib.utils import getScriptDir
 
 from threading import Thread, enumerate
 from time import sleep
