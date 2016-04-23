@@ -170,13 +170,13 @@ class ContentMetadataExtractor(object):
 		self.docs = map(lambda l: l[1:], docs)
 		self.non_go_directories = map(lambda l: l[1:], non_go_directories)
 
-	def getDepsDirectories(self):
+	def depsDirectories(self):
 		return self._deps_dirs
 
-	def getGoDirectories(self):
+	def goDirectories(self):
 		return self.go_directories
 
-	def getProjectContentMetadata(self):
+	def projectContentMetadata(self):
 		return {
 			"metadata": {
 				"licenses": self.licenses,

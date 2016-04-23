@@ -227,7 +227,7 @@ class GoSymbolsExtractor(object):
 		cme = ContentMetadataExtractor(self.directory)
 		cme.extract()
 
-		for dir_info in cme.getGoDirectories():
+		for dir_info in cme.goDirectories():
 			#if sufix == ".":
 			#	sufix = bname
 			pkg_name = ""
