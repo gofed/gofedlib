@@ -53,4 +53,21 @@ class UrlBuilderTest(unittest.TestCase):
 			"https://kojipkgs.fedoraproject.org/packages/etcd/2.3.1/1.fc25/armv7hl/etcd-unit-test-2.3.1-1.fc25.armv7hl.rpm"
 		)
 
+		self.assertEqual(
+			b.buildGithubProvider({
+				"provider": "github",
+				"username": "coreos",
+				"project": "etcd"
+			}),
+			"github.com/coreos/etcd"
+		)
+
+		self.assertEqual(
+			b.buildBitbucketProvider({
+				"provider": "bitbucket",
+				"username": "ww",
+				"project": "goautoneg"
+			}),
+			"bitbucket.org/ww/goautoneg"
+		)
 

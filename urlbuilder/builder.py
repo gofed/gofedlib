@@ -32,6 +32,18 @@ class UrlBuilder(object):
 		else:
 			raise ValueError("Protocol '%s' not supported" % protocol)
 
+	def buildGithubProvider(self, provider):
+		if provider["provider"] != "github":
+			raise ValueError("Provider != github: %s" % provider["provider"])
+
+		return "github.com/%s/%s" % (provider["username"], provider["project"])
+
+	def buildBitbucketProvider(self, provider):
+		if provider["provider"] != "bitbucket":
+			raise ValueError("Provider != bitbucket: %s" % provider["provider"])
+
+		return "bitbucket.org/%s/%s" % (provider["username"], provider["project"])
+
 	def buildKojiRpm(self, product, build, rpm):
 		if product == "Fedora":
 			b = Build(build)
