@@ -13,3 +13,5 @@ class Config(object):
 	def ipparserMapping(self):
 		return self.config.get("goipparser", "mapping")
 
+	def loggingConfigFile(self):
+		return self.config.get("logging", "config_file")
