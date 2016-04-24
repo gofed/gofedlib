@@ -36,7 +36,7 @@ There are three function to be called:
 ```python
 # extract API and dependencies
 
-from gofed_lib.gosymbolsextractor import api, project_packages
+from gofed_lib.go.functions import api, project_packages
 from gofed_lib.types import ExtractionError
 import logging
 
@@ -67,8 +67,8 @@ print ""
 ```python
 # API comparision
 
-from gofed_lib.gosymbolsextractor import api
-from gofed_lib.goapidiff import apidiff
+from gofed_lib.go.functions import api
+from gofed_lib.go.functions import apidiff
 from gofed_lib.types import ExtractionError
 import logging
 
