@@ -17,6 +17,7 @@
 
 import time
 import json
+from .distributionnameparser import DistributionNameSignature
 
 class DistributionSnapshot(object):
 
@@ -42,7 +43,6 @@ class DistributionSnapshot(object):
 		"""Add/Update package rpm
 		"""
 		self._builds[package] = {"build": build, "build_ts": build_ts, "rpms": rpms}
-		print {"build": build, "build_ts": build_ts, "rpms": rpms}
 
 	def clone(self):
 		"""Clone (deepcopy) snapshot
@@ -64,7 +64,7 @@ class DistributionSnapshot(object):
 			})
 
 		return {
-			"distribution": self.distribution(),
+			"distribution": self.distribution().json(),
 			"go_version": self.go_version,
 			"timestamp": self.created,
 			"builds": builds
@@ -87,7 +87,7 @@ class DistributionSnapshot(object):
 		with open(file, "r") as f:
 			data = json.load(f)
 
-		self._distribution = data["distribution"]
+		self._distribution = DistributionNameSignature().load(data["distribution"])
 		self.go_version = data["go_version"]
 		self.timestamp = data["timestamp"]
 		self._builds = data["builds"]

@@ -9,18 +9,45 @@
 
 import re
 
+class DistributionNameSignature(object):
+
+	def __init__(self, product, version):
+		self._product = product
+		self._version = version
+
+	def product(self):
+		return self._product
+
+	def version(self):
+		return self._version
+
+	def __repr__(self):
+		return "%s %s" % (self._product, self._version)
+
+	def json(self):
+		return {
+			"product": self._product,
+			"version": self._version
+		}
+
+	def load(self, data):
+		self._product = data["product"]
+		self._version = data["version"]
+
 class DistributionNameParser(object):
 
 	def __init__(self):
-		self.product = ""
-		self.version = ""
+		self._signature = None
 
 	def _parseFedora(self, name):
-		for regex in [r"Fedora\s*(\d\d?)", r"F(\d\d?)", r"Fedora:f?(\d\d?)"]:
+		for regex in [r"Fedora\s*(\d\d?)", r"F(\d\d?)", r"Fedora:f?(\d\d?)", r"Fedora:(rawhide)"]:
 			groups = re.search(regex, name)
 			if groups:
 				return groups
 		return None
+
+	def signature(self):
+		return self._signature
 
 	def parse(self, name):
 		"""Parse distribution string
@@ -31,20 +58,8 @@ class DistributionNameParser(object):
 		name = name.strip()
 		groups = self._parseFedora(name)
 		if groups:
-			self.product = "Fedora"
-			self.version = groups.group(1)
+			self._signature = DistributionNameSignature("Fedora", groups.group(1))
 			return self
 
 		raise ValueError("Distribution name '%s' not recognized" % name)
-
-	def getSignature(self):
-		"""Get distribution signature
-
-		:returns: dictionary with product and version
-		:type: dict
-		"""
-		return {
-			"product": self.product,
-			"version": self.version
-		}
 

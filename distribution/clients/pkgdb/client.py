@@ -1,10 +1,11 @@
 import requests
-import logging
 import json
 from lib.utils import getScriptDir
-
 from threading import Thread, enumerate
 from time import sleep
+
+import logging
+logger = logging.getLogger("pkgdb_client")
 
 __all__ = ["PkgDBClient"]
 
@@ -85,11 +86,13 @@ class PkgDBClient(object):
 			if collection["name"] not in collections:
 				collections[ collection["name"] ] = {}
 
-
 			if collection["koji_name"] not in collections[ collection["name"] ]:
 				collections[ collection["name"] ][ collection["koji_name"] ] = {}
 
-			collections[ collection["name"] ][ collection["koji_name"] ] = {"dist_tag": collection["dist_tag"][1:]}
+			collections[ collection["name"] ][ collection["koji_name"] ] = {
+				"dist_tag": collection["dist_tag"][1:],
+				"branch": collection["branchname"]
+			}
 
 		return collections
 
@@ -125,11 +128,19 @@ class PkgDBClient(object):
 		MAX_LEN = 30
 		# break the list of packages into lists of at most 50 packages
 		package_names = packages.keys()
-		for i in range(0, len(package_names), MAX_LEN):
+
+		packages_total = len(package_names)
+		packages_counter = 0
+		logger.info("%s packages to process" % packages_total)
+
+		for i in range(0, packages_total, MAX_LEN):
 			sublist = package_names[i:i+MAX_LEN]
 			branches = self._getPackageBranches(sublist)
 			for package in sublist:
 				packages[package]["branches"] = branches[package]
+
+			packages_counter = packages_counter + len(branches)
+			logger.info("%s/%s packages processed" % (packages_counter, packages_total))
 
 		return packages
 

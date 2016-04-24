@@ -15,5 +15,5 @@ class DistributionNameParserTest(unittest.TestCase):
 		expected = {"product": "Fedora", "version": "22"}
 
 		for name in names:
-			actual = parser.parse(name).getSignature()
+			actual = parser.parse(name).signature().json()
 			self.assertEqual(expected, actual)

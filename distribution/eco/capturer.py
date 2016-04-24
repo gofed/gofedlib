@@ -1,4 +1,6 @@
 import logging
+logger = logging.getLogger("distribution_capturer")
+
 from ..distributionsnapshot import DistributionSnapshot
 
 class EcoCapturer(object):
@@ -28,39 +30,60 @@ class EcoCapturer(object):
 		"""
 		self._snapshots = {}
 
+		# get collections
+		collections = self.pkgdb_client.getCollections()
+
 		# detect all golang packages with generic name
 		packages = self.pkgdb_client.getGolangPackages()
 
 		# scan packages
 		for distribution in distributions:
-			logging.info("Scanning %s:%s..." % (distribution["product"], distribution["version"]))
-			snapshot = DistributionSnapshot(distribution)
+			logger.info("Capturing current builds for %s" % distribution)
 
-			for package in sorted(list(set(packages.keys() + custom_packages) - set(blacklist))):
+			snapshot = DistributionSnapshot(distribution)
+			product = distribution.product()
+			version = distribution.version()
+
+			if product not in collections:
+				logging.error("Product '%s' not recognized" % product)
+
+			if version not in collections[product]:
+				logging.error("Version '%s' not recognized" % version)
+
+			branch = collections[product][version]["branch"]
+
+			scanned_packages = sorted(list(set(packages.keys() + custom_packages) - set(blacklist)))
+			scanned_packages_total = len(scanned_packages)
+			scanned_packages_counter = 0
+
+			for package in scanned_packages:
+				scanned_packages_counter = scanned_packages_counter + 1
 				# filter out all packages not in targeted distribution
 				# custom package inherits all available branches
 				if package in packages:
-					if distribution["version"] == "rawhide":
-						branch = "master"
-					else:
-						branch = distribution["version"]
-	
 					if branch not in packages[package]["branches"]:
+						logger.warning("No %s branch found for %s" % (branch, package))
 						continue
 
 				# get a list of rpms for given package
 				try:
-					data = self.koji_client.getLatestRPMS(distribution["version"], package)
+					data = self.koji_client.getLatestRPMS(distribution.version(), package)
 				except ValueError as e:
-					logging.error(e)
+					logger.warning(str(e))
 					continue
 				except KeyError as e:
-					logging.error(e)
+					logger.warning(str(e))
 					continue
 
+				logger.info("%s/%s %s: %s rpms detected" % (
+					scanned_packages_counter,
+					scanned_packages_total,
+					package,
+					len(data["rpms"])
+				))
 				snapshot.setRpms(package, data["name"], data["build_ts"], data["rpms"])
 
-			snapshot_key = "%s:%s" % (distribution["product"], distribution["version"])
+			snapshot_key = "%s:%s" % (distribution.product(), distribution.version())
 			self._snapshots[snapshot_key] = {"snapshot": snapshot, "distribution": distribution}
 
 		return self
