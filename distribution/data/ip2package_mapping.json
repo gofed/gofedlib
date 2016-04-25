@@ -15,7 +15,7 @@
 {"ipprefix": "golang.org/x/net","package":"golang-googlecode-net"},
 {"ipprefix": "golang.org/x/text","package":"golang-googlecode-text"},
 {"ipprefix": "golang.org/x/oauth2","package":"golang-googlecode-goauth2"},
-{"ipprefix": "golang.org/x/crypto","package":"golang-googlecode-crypto"},
+{"ipprefix": "golang.org/x/crypto","package":"golang-googlecode-go-crypto"},
 {"ipprefix": "gopkg.in/check.v1","package":"golang-gopkg-check"},
 {"ipprefix": "github.com/motain/gocheck","package":"golang-gopkg-check"},
 {"ipprefix": "gopkg.in/v1/check","package":"golang-gopkg-check"},
@@ -23,5 +23,7 @@
 {"ipprefix": "gopkg.in/yaml.v2","package":"golang-gopkg-yaml"},
 {"ipprefix": "gopkg.in/yaml.v1","package":"golang-gopkg-yaml"},
 {"ipprefix": "github.com/golang/protobuf","package":"golang-googlecode-goprotobuf"},
+{"ipprefix": "github.com/gogo/protobuf","package":"golang-googlecode-gogoprotobuf"},
 {"ipprefix": "camlistore.org","package":"camlistore"},
+{"ipprefix": "google.golang.org/grpc","package":"golang-github-grpc-grpc-go"},
 {"ipprefix": "k8s.io/heapster", "package": "golang-github-kubernetes-heapster"}]
