@@ -18,7 +18,7 @@ class FakeKojiClient(object):
 		return {
 			"name": build["build"],
 			"build_ts": build["build_ts"],
-			"rpms": build["rpms"]
+			"rpms": map(lambda l: {"name": l}, build["rpms"])
 		}
 
 	def getPackageBuilds(self, distribution, package, since = 0, to = 0):
