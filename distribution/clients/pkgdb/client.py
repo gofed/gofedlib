@@ -1,6 +1,5 @@
 import requests
 import json
-from lib.utils import getScriptDir
 from threading import Thread, enumerate
 from time import sleep
 
@@ -141,19 +140,7 @@ class PkgDBClient(object):
 
 			packages_counter = packages_counter + len(branches)
 			logger.info("%s/%s packages processed" % (packages_counter, packages_total))
+			break
 
 		return packages
 
-
-class FakePkgDBClient(object):
-
-	def __init__(self):
-		pass
-
-	def packageExists(self, package):
-		return False
-
-	def getGolangPackages(self):
-		
-		with open("%s/fakedata.json" % getScriptDir(__file__), "r") as f:
-			return json.load(f)
