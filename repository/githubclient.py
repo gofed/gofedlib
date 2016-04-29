@@ -3,10 +3,13 @@
 from github import Github, GithubException
 import time
 import datetime
+import requests
 
 class GithubClient(object):
 
 	def __init__(self, username, project):
+		self._username = username
+		self._project = project
 		self.github = Github()
 		try:
 			self.repo = self.github.get_repo(username + '/' + project)
@@ -83,33 +86,28 @@ class GithubClient(object):
 		raise KeyError("Latest commit not found")
 
 	def _getResource(self, resource_url):
-		try:
-			return urllib2.urlopen(resource_url)
-		except urllib2.URLError as err:
-			msg = "Unable to retrieve resource, url = %s, err = " % (resource_url, err)
-			raise urllib2.URLError(msg)
-		except urllib2.HTTPError as err:
-			msg = "Unable to retrieve resource, url = %s, err = " % (resource_url, err)
-			raise urllib2.HTTPError(msg)
+		r = requests.get(resource_url)
+		if r.status_code != requests.codes.ok:
+			raise GithubException("Unable to retrieve resource")
 
-	def getGithubReleases(self,username, project):
+		return r.json()
+
+	def releases(self):
 		# TODO(jchaloup): not tested, test!!!
-		resource_url = "https://api.github.com/repos/%s/%s/releases" % (username, project)
-		c_file = self._getResource(resource_url).read()
+		resource_url = "https://api.github.com/repos/%s/%s/releases" % (self._username, self._project)
+		data = self._getResource(resource_url)
 
 		# get the latest commit
 		releases = []
-		for release in json.loads(c_file):
+		for release in data:
 			releases.append(release["tag_name"])
 
 		return releases
 
-	def getGithubTags(self, username, project):
+	def tags(self):
 		# TODO(jchaloup): not tested, test it!!!, e.g. TagsNotRetrieved is not defined
-		resource_url = "https://api.github.com/repos/%s/%s/tags" % (username, project)
-		c_file = self._getResource(resource_url).read()
-
-		data = json.loads(c_file)
+		resource_url = "https://api.github.com/repos/%s/%s/tags" % (self._username, self._project)
+		data = self._getResource(resource_url)
 		if type(data) == {} and "message" in data:
 			raise TagsNotRetrieved("Unable to retrieve tags: %s" % data["message"])
 
