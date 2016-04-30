@@ -47,6 +47,10 @@ loggers:
                 level: WARNING
                 handlers: [consoleHandler]
                 propagate: 0
+        github_source_code_provider:
+                level: INFO
+                handlers: [consoleHandler]
+                propagate: 0
 root:
         level: WARNING
         handlers: [consoleHandler]
