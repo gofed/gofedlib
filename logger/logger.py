@@ -1,4 +1,4 @@
-from lib.config.config import Config
+from lib.config.libconfig import LibConfig
 import yaml
 import logging
 import logging.config
@@ -12,7 +12,7 @@ class Logger(object):
 		if "GOFED_DEVEL" in os.environ:
 			config_file = "%s/logging.yaml" % getScriptDir(__file__)
 		else:
-			config_file = Config().loggingConfigFile()
+			config_file = LibConfig().loggingConfigFile()
 
 		log_config = yaml.load(open(config_file, 'r'))
 		if verbose:

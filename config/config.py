@@ -4,20 +4,18 @@ import os
 
 class Config(object):
 
-	def __init__(self):
+	def __init__(self, config_file):
 		if "GOFED_DEVEL" not in os.environ:
-			self.config_file = "/etc/gofed/lib.conf"
+			config_file_path = "/etc/gofed/%s" % config_file
 		else:
-			self.config_file = "%s/lib.conf" % getScriptDir(__file__)
+			config_file_path = "%s/%s" % (self._classDir(), config_file)
 
-		self._parse(self.config_file)
+		self._parse(config_file_path)
+
+	def _classDir(self):
+		return getScriptDir(__file__)
 
 	def _parse(self, config_file):
-		self.config = ConfigParser.ConfigParser()
-		self.config.read(config_file)
+		self._config = ConfigParser.ConfigParser()
+		self._config.read(config_file)
 
-	def ipparserMapping(self):
-		return self.config.get("goipparser", "mapping")
-
-	def loggingConfigFile(self):
-		return self.config.get("logging", "config_file")

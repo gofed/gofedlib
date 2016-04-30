@@ -1,12 +1,12 @@
 from .parser import ImportPathParser
 import json
 from lib.utils import getScriptDir
-from lib.config.config import Config
+from lib.config.libconfig import LibConfig
 
 class ImportPathParserBuilder(object):
 
 	def __init__(self):
-		self.mapping = Config().ipparserMapping()
+		self.mapping = LibConfig().ipparserMapping()
 
 	def buildDefault(self):
 		if self.mapping == "local":
