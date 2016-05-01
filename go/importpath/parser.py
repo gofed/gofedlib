@@ -35,12 +35,12 @@ class ImportPathParser(object):
 		url = re.sub(r'https://', '', url)
 
 		# is import path native package?
-		if importpath.split('/')[0] in self.native_packages["packages"]:
+		if url.split('/')[0] in self.native_packages["packages"]:
 			self.native = True
 			return self
 
 		for regex in self.known_ipprefixes:
-			match = re.search(regex, importpath)
+			match = re.search(regex, url)
 			if match:
 				self._prefix = match.group(1)
 				if match.group(3):
