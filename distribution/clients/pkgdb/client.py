@@ -140,7 +140,6 @@ class PkgDBClient(object):
 
 			packages_counter = packages_counter + len(branches)
 			logger.info("%s/%s packages processed" % (packages_counter, packages_total))
-			break
 
 		return packages
 
