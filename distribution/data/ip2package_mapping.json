@@ -16,6 +16,7 @@
 {"ipprefix": "golang.org/x/text","package":"golang-googlecode-text"},
 {"ipprefix": "golang.org/x/oauth2","package":"golang-googlecode-goauth2"},
 {"ipprefix": "golang.org/x/crypto","package":"golang-googlecode-go-crypto"},
+{"ipprefix": "golang.org/x/sys","package":"golang-github-golang-sys"},
 {"ipprefix": "gopkg.in/check.v1","package":"golang-gopkg-check"},
 {"ipprefix": "github.com/motain/gocheck","package":"golang-gopkg-check"},
 {"ipprefix": "gopkg.in/v1/check","package":"golang-gopkg-check"},
