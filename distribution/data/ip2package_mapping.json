@@ -2,6 +2,7 @@
 {"ipprefix": "github.com/GoogleCloudPlatform/gcloud-golang","package":"golang-google-golangorg-cloud"},
 {"ipprefix": "github.com/google/cadvisor","package":"cadvisor"},
 {"ipprefix": "github.com/docker/docker","package":"docker"},
+{"ipprefix": "github.com/docker/distribution","package":"docker-distribution"},
 {"ipprefix": "github.com/coreos/etcd","package":"etcd"},
 {"ipprefix": "github.com/coreos/fleet","package":"fleet"},
 {"ipprefix": "github.com/golang/crypto","package":"golang-googlecode-crypto"},
