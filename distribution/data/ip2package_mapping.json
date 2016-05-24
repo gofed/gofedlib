@@ -1,4 +1,5 @@
 [{"ipprefix": "github.com/GoogleCloudPlatform/kubernetes","package":"kubernetes"},
+{"ipprefix": "k8s.io/kubernetes","package":"kubernetes"},
 {"ipprefix": "github.com/GoogleCloudPlatform/gcloud-golang","package":"golang-google-golangorg-cloud"},
 {"ipprefix": "github.com/google/cadvisor","package":"cadvisor"},
 {"ipprefix": "github.com/docker/docker","package":"docker"},
