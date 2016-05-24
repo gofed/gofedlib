@@ -21,7 +21,7 @@ class RepositoryClientBuilder(object):
 			raise ValueError('Directory not found: %s' % repository_directory)
 
 		if os.path.exists("%s/.git" % repository_directory):
-			return GitLocalClient(repository_directory)
+			return GitLocalClient(repository_directory, repo_info)
 
 		if os.path.exists("%s/.hg" % repository_directory):
 			return MercurialLocalClient(repository_directory)

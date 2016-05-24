@@ -5,9 +5,13 @@ import datetime
 
 class GitLocalClient(object):
 
-	def __init__(self, repo_directory):
+	def __init__(self, repo_directory, repo_info = None):
 		self.repo = git.Repo(repo_directory)
 		self.refs = {}
+		self._repo_info = repo_info
+		# pull the repo
+		g = git.cmd.Git(repo_directory)
+		g.pull()
 
 	def branches(self):
 		"""Return a list of branches for given repository
@@ -77,4 +81,7 @@ class GitLocalClient(object):
 		try:
 			return self._commitData(self.repo.commit(commit))
 		except (ValueError, KeyError, BadObject):
-			raise KeyError("Commit %s not found" % commit)
+			if self._repo_info:
+				raise KeyError("Commit %s not found for %s" % (commit, str(self._repo_info)))
+			else:
+				raise KeyError("Commit %s not found" % commit)
