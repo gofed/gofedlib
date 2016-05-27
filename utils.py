@@ -2,6 +2,7 @@ from subprocess import PIPE, Popen
 import os
 import time
 import datetime
+import jinja2
 
 RED = '\033[91m'
 GREEN = '\033[92m'
@@ -51,3 +52,13 @@ def intervalCovered(interval1, interval2):
 		return True
 
 	return False
+
+def renderTemplate(searchpath, template_file, template_vars):
+
+	templateLoader = jinja2.FileSystemLoader( searchpath=searchpath )
+	templateEnv = jinja2.Environment( loader=templateLoader )
+	template = templateEnv.get_template( template_file )
+	content = template.render( template_vars )
+
+	return content
+
