@@ -78,7 +78,7 @@ setup(
     maintainer='Jan Chaloupka',
     maintainer_email='jchaloup@redhat.com',
     description='A set of python modules carrying operation related to Go source codes analysis used in Gofed',
-    url='https://github.com/gofed/lib',
+    url='https://github.com/gofed/gofedlib',
     license='GPL',
     keywords='gofed golang API dependencies',
 )
