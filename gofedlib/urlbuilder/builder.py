@@ -5,7 +5,7 @@
 # - upstream repository clone url (github.com, bitbucket.org)
 #
 
-from gofed_lib.distribution.helpers import Build, Rpm
+from gofedlib.distribution.helpers import Build, Rpm
 
 class UrlBuilder(object):
 

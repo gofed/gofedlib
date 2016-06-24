@@ -1,4 +1,4 @@
---- 
+---
 version: 1
 formatters:
         simpleFormatter:
@@ -18,12 +18,12 @@ loggers:
         pkgdb_client:
                 level: INFO
                 handlers: [consoleHandler]
-                qualname: gofed_lib.distribution.clients.pkgdb.client
+                qualname: gofedlib.distribution.clients.pkgdb.client
                 propagate: 0
         distribution_capturer:
                 level: INFO
                 handlers: [consoleHandler]
-                qualname: gofed_lib.distribution.eco.capturer
+                qualname: gofedlib.distribution.eco.capturer
                 propagate: 0
         distribution_snapshot_capturer:
                 level: INFO

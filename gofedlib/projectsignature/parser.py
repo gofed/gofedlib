@@ -8,8 +8,8 @@
 #
 
 import re
-from gofed_lib.providers.providerbuilder import ProviderBuilder
-from gofed_lib.distribution.distributionnameparser import DistributionNameParser
+from gofedlib.providers.providerbuilder import ProviderBuilder
+from gofedlib.distribution.distributionnameparser import DistributionNameParser
 
 class ProjectSignatureParser(object):
 

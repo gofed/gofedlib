@@ -1,5 +1,5 @@
 import ConfigParser
-from gofed_lib.utils import getScriptDir
+from gofedlib.utils import getScriptDir
 import os
 
 class Config(object):
