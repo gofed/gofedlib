@@ -1,0 +1,115 @@
+#!/bin/env python
+
+import json
+from argparse import ArgumentParser
+from gofedlib.go.functions import api, project_packages
+from gofedlib.go.importpath.decomposerbuilder import ImportPathsDecomposerBuilder
+from gofedlib.go.importpath.normalizer import ImportPathNormalizer
+from gofedlib.go.importpath.parserbuilder import ImportPathParserBuilder
+from gofedlib.providers.providerbuilder import ProviderBuilder
+
+
+def dict2json(o, pretty=True):
+    if pretty is True:
+        return json.dumps(o, sort_keys=True, separators=(',', ': '), indent=2)
+    else:
+        return json.dumps(o)
+
+
+def ippaths2providers(deps_list):
+    normalizer = ImportPathNormalizer()
+    dependencies = map(lambda l: normalizer.normalize(l), deps_list)
+    dependencies = list(set(dependencies))
+
+    decomposer = ImportPathsDecomposerBuilder().buildLocalDecomposer()
+    decomposer.decompose(dependencies)
+
+    project_provider = ProviderBuilder().buildUpstreamWithLocalMapping()
+
+    result = []
+    for prefix in decomposer.classes().keys():
+        if prefix != 'Native' and prefix != 'Unknown':
+            result.append(project_provider.parse(prefix).prefix())
+
+    return result
+
+
+def get_dependencies(packages, selection):
+    dependencies = {}
+
+    if selection['packages']:
+        dependencies['deps-packages'] = []
+        for dependency in packages['dependencies']:
+            for item in dependency['dependencies']:
+                dependencies['deps-packages'].append(item['name'])
+
+    if selection['main']:
+        dependencies['deps-main'] = []
+        for record in packages['main']:
+            for dependency in record['dependencies']:
+                dependencies['deps-main'].append(dependency)
+
+    if selection['tests']:
+        dependencies['deps-tests'] = []
+        for record in packages['tests']:
+            for dependency in record['dependencies']:
+                dependencies['deps-tests'].append(dependency)
+
+    for key in dependencies.keys():
+        dependencies[key] = ippaths2providers(dependencies[key])
+        dependencies[key] = map(lambda l: 'https://%s' % l, dependencies[key])
+
+    return dependencies
+
+
+if __name__ == '__main__':
+    ap = ArgumentParser()
+    ap.add_argument('path')
+    ap.add_argument('-m', '--dependencies-main', help="list of dependencies in main packages",
+                    default=False, action='store_true')
+    ap.add_argument('-d', '--dependencies-packages', help="list of dependencies in packages",
+                    default=False, action='store_true')
+    ap.add_argument('-t', '--dependencies-tests', help="list of dependencies in tests",
+                    default=False, action='store_true')
+    ap.add_argument('-a', '--api', help="API listing",
+                    default=False, action='store_true')
+    ap.add_argument('-j', '--pretty', help="print JSON nicely formatted",
+                    default=False, action='store_true')
+    ap.add_argument('-p', '--packages', help="packages listing",
+                    default=False, action='store_true')
+    ap.add_argument('-o', '--output', help="output file",
+                    default=None, type=str)
+    ap.add_argument('-r', '--raw-project-packages', help="raw output from gofedlib",
+                    default=False, action='store_true')
+
+    args = ap.parse_args()
+    result = {}
+    project_package_info = None
+
+    if args.raw_project_packages:
+        project_package_info = project_packages(args.path)
+        result['raw-project-packages'] = project_package_info
+
+    if args.packages:
+        if not project_package_info:
+            packages_info = project_packages(args.path)
+        result['packages'] = packages_info['packages']
+
+    if args.api:
+        result['api'] = api(args.path)
+
+    if args.dependencies_main \
+            or args.dependencies_tests or args.dependencies_packages:
+        selection = {
+            'main': args.dependencies_main,
+            'packages': args.dependencies_packages,
+            'tests': args.dependencies_tests
+        }
+
+        result.update(get_dependencies(project_packages(args.path), selection))
+
+    if args.output:
+        with open(args.output, 'w') as f:
+            f.write(dict2json(result, args.pretty))
+    else:
+        print(dict2json(result, args.pretty))

@@ -1,4 +1,4 @@
-import sys 
+import sys
 
-if __name__ == "gofed_lib":
+if __name__ == "gofedlib":
 	sys.modules['lib'] = sys.modules[__name__]
