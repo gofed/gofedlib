@@ -18,6 +18,34 @@ Covered areas:
 
 ## How to install
 
+### Using pip (preferred)
+
+Gofedlib uses a parser written in Go. You should install Go compiler before
+installing gofedlib. If you use Fedora, just run:
+```
+# for Fedora 22+
+dnf install golang
+# older versions:
+yum install golang
+```
+
+Each new release is available in pip - just run:
+```
+pip install gofedlib
+```
+
+If you see the following error message (with long backtrace):
+```
+error: option --single-version-externally-managed not recognized
+```
+just update your pip and wheel:
+```
+pip install --upgrade pip
+pip install --upgrade wheel
+```
+
+### Hard Copy (not recommended)
+
 There are two ways:
 
 * clone the repository as gofed_lib directory under ``/usr/lib/python2.*/site-packages/`` (or ``/usr/lib/python3.*/site-packages/``)
