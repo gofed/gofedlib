@@ -9,4 +9,7 @@ class LibConfig(Config):
 		return self._config.get("goipparser", "mapping")
 
 	def loggingConfigFile(self):
-		return self._config.get("logging", "config_file")
+		if self._config.has_option("logging", "config_file"):
+			return self._config.get("logging", "config_file")
+		else:
+			return None

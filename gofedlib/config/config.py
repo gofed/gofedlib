@@ -5,12 +5,13 @@ import os
 class Config(object):
 
 	def __init__(self, config_file):
-		if "GOFED_DEVEL" not in os.environ:
-			config_file_path = "/etc/gofed/%s" % config_file
-		else:
-			config_file_path = "%s/%s" % (self._classDir(), config_file)
+		config_etc = "/etc/gofed/%s" % config_file
+		config_default = "%s/%s" % (self._classDir(), config_file)
 
-		self._parse(config_file_path)
+		if os.path.isfile(config_etc):
+			self._parse(config_etc)
+		else:
+			self._parse(config_default)
 
 	def _classDir(self):
 		return getScriptDir(__file__)
