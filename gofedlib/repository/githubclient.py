@@ -14,7 +14,7 @@ class GithubClient(object):
 		try:
 			self.repo = self.github.get_repo(username + '/' + project)
 		except GithubException as e:
-			raise KeyError('Failed to get repository information: ' % e)
+			raise KeyError('Failed to get repository information: %s' % e)
 
 	def branches(self):
 		"""Return a list of branches for given repository
