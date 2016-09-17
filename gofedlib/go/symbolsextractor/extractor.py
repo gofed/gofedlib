@@ -183,7 +183,7 @@ class GoSymbolsExtractor(object):
 		if imports_only:
 			options = "-imports"
 
-		so, se, rc = runCommand("%s/parseGo %s %s" % (script_dir, options, path))
+		so, se, rc = runCommand("%s/parseGo %s '%s'" % (script_dir, options, path))
 		if rc != 0:
 			return (1, se)
 
@@ -243,6 +243,7 @@ class GoSymbolsExtractor(object):
 					(self.directory, dir_info['dir'], go_file), self.imports_only)
 				if err != 0:
 					if self.skip_errors:
+						logging.warning("Error parsing %s: %s" % ("%s/%s" % (dir_info['dir'], go_file), output))
 						continue
 					else:
 						raise ExtractionError("Error parsing %s: %s" % ("%s/%s" % (dir_info['dir'], go_file), output))
