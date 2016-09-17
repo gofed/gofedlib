@@ -68,6 +68,17 @@ class GoSymbolsExtractor(object):
 	def _normalizePath(self, path):
 		return path[1:] if path[0] == "/" else path
 
+	def _isValidPath(self, path):
+		# filter out all import paths starting with ./
+		if path.startswith("./"):
+			return False
+
+		# filter out all .. import paths
+		if path == "..":
+			return False
+
+		return True
+
 	def packages(self):
 		return self._getProjectPackages()
 
@@ -253,13 +264,10 @@ class GoSymbolsExtractor(object):
 
 				pname = go_file_json["pkgname"]
 
-				for path in go_file_json["imports"]:
-					# filter out all import paths starting with ./
-					if path["path"].startswith("./"):
-						continue
+				go_file_json["imports"] = filter(lambda l: self._isValidPath(l["path"]), go_file_json["imports"])
 
-					# filter out all .. import paths
-					if path["path"] == "..":
+				for path in go_file_json["imports"]:
+					if not self._isValidPath(path["path"]):
 						continue
 
 					# file_pkg_pair:
