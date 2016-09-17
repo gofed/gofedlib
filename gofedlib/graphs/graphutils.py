@@ -143,6 +143,27 @@ class GraphUtils(object):
 
 		return subgraph
 
+	@staticmethod
+	def filterGraph(graph, node_fnc):
+		"""Remove all nodes for with node_fnc does not hold
+		"""
+		nodes = filter(lambda l: node_fnc(l), graph.nodes())
+		edges = {}
+
+		gedges = graph.edges()
+		for u in gedges:
+			if u not in nodes:
+				continue
+			for v in gedges[u]:
+				if v not in nodes:
+					continue
+				try:
+					edges[u].append(v)
+				except KeyError:
+					edges[u] = [v]
+
+		return Graph(nodes, edges)
+
 class SCCBuilder(object):
 
 	def __init__(self, graph):
