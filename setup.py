@@ -73,6 +73,7 @@ setup(
             'spec_model.json'
         ]
     },
+    include_package_data=True,
     author='Jan Chaloupka',
     author_email='jchaloup@redhat.com',
     maintainer='Jan Chaloupka',
