@@ -65,8 +65,9 @@ class ContentMetadataExtractor(object):
 					continue
 
 		return provider_prefix_counter
+
 	def _isKnownDepsDirectoryPrefix(self, directory):
-		for prefix in ["/Godeps/_workspace/src", "/vendor/src", "/external"]:
+		for prefix in ["/Godeps/_workspace/src", "/vendor/src", "/external", "/vendor"]:
 			if directory.endswith(prefix):
 				return True
 
