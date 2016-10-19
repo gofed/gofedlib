@@ -12,6 +12,7 @@
 {"ipprefix": "golang.org/x/sys","provider_prefix":"github.com/golang/sys"},
 {"ipprefix": "golang.org/x/time","provider_prefix":"github.com/golang/time"},
 {"ipprefix": "golang.org/x/tools","provider_prefix":"github.com/golang/tools"},
+{"ipprefix": "golang.org/x/text","provider_prefix":"github.com/golang/text"},
 {"ipprefix": "google.golang.org/api", "provider_prefix":"github.com/google/google-api-go-client"},
 {"ipprefix": "google.golang.org/appengine","provider_prefix":"github.com/golang/appengine"},
 {"ipprefix": "google.golang.org/cloud","provider_prefix":"github.com/GoogleCloudPlatform/gcloud-golang"},
