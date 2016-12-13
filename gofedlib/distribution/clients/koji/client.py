@@ -11,6 +11,7 @@ class KojiClient(object):
 	def __init__(self):
 		server = "http://koji.fedoraproject.org/kojihub/"
 		self.session = koji.ClientSession(server)
+		self.session.krb_login(proxyuser=None)
 
 	def getLatestRPMS(self, distribution, package):
 		data = self.session.getLatestRPMS(distribution, package=package)
@@ -64,4 +65,3 @@ class KojiClient(object):
 			builds[build_info["nvr"]] = build
 
 		return builds
-
