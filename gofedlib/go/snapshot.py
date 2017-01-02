@@ -94,3 +94,24 @@ class Snapshot(object):
 
 		return self
 
+        def readVendorFile (self, file):
+            with open(file,"r") as f:
+                data = json.load(f)
+
+            if "package" not in data:
+                raise ValueError("package key missing in %s" % file)
+
+            packages = {}
+
+            for package in data["package"]:
+                if "path" not in package:
+                    raise ValueError("Import path missing in %s" % file)
+                if "revision" not in package:
+                    raise ValueError("Revision missing in %s" % file)
+
+                packages[package["path"]] = package["revision"]
+
+            self.clear()
+            self._packages = packages
+
+            return self
