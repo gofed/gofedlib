@@ -34,5 +34,6 @@
 {"ipprefix": "k8s.io/kubernetes","provider_prefix":"github.com/kubernetes/kubernetes"},
 {"ipprefix": "gopkg.in/natefinch/lumberjack.v1","provider_prefix":"github.com/natefinch/lumberjack"},
 {"ipprefix": "launchpad.net/gocheck","provider_prefix":"github.com/go-check/check"},
-{"ipprefix": "speter.net/go/exp/math/dec/inf","provider_prefix":"github.com/hankya/go-decimal-inf.exp"}
+{"ipprefix": "speter.net/go/exp/math/dec/inf","provider_prefix":"github.com/hankya/go-decimal-inf.exp"},
+{"ipprefix": "gopkg.in/inf.v0","provider_prefix":"github.com/go-inf/inf"}
 ]
