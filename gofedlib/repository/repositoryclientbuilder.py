@@ -6,10 +6,10 @@ import os
 
 class RepositoryClientBuilder(object):
 
-	def buildWithRemoteClient(self, repo_info):
+	def buildWithRemoteClient(self, repo_info, lazy=True):
 
 		if repo_info['provider'] == 'github':
-			return GithubClient(repo_info['username'], repo_info['project'])
+			return GithubClient(repo_info['username'], repo_info['project'], lazy)
 		if repo_info['provider'] == 'bitbucket':
 			return BitbucketClient(repo_info['username'], repo_info['project'])
 

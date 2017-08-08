@@ -7,12 +7,12 @@ import requests
 
 class GithubClient(object):
 
-	def __init__(self, username, project):
+	def __init__(self, username, project, lazy=True):
 		self._username = username
 		self._project = project
 		self.github = Github()
 		try:
-			self.repo = self.github.get_repo(username + '/' + project)
+			self.repo = self.github.get_repo(username + '/' + project, lazy)
 		except GithubException as e:
 			raise KeyError('Failed to get repository information: %s' % e)
 
