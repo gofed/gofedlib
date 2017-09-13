@@ -7,6 +7,8 @@
 # - [distribution|distro]:product[:version]:ipprefix
 #
 
+from __future__ import print_function
+
 import re
 from gofedlib.providers.providerbuilder import ProviderBuilder
 from gofedlib.distribution.distributionnameparser import DistributionNameParser
@@ -74,6 +76,6 @@ class ProjectSignatureParser(object):
 
 if __name__ == "__main__":
 	p = ProjectSignatureParser()
-	print p.parse("upstream:github.com/coreos/etcd:434343")
-	print p.parse("upstream:github.com/coreos/etcd")
-	print p.parse("distro:Fedora:f23:gopkg.yaml/yaml.v1")
+	print(p.parse("upstream:github.com/coreos/etcd:434343"))
+	print(p.parse("upstream:github.com/coreos/etcd"))
+	print(p.parse("distro:Fedora:f23:gopkg.yaml/yaml.v1"))

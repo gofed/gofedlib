@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import hglib
 from hglib.util import b
 import datetime
@@ -89,4 +91,4 @@ if __name__ == "__main__":
 	#commits = client.commits("default", since = 1305929843)
 	#for commit in commits: #, since=1313487608):
 	#	print commits[commit]["cdate"]
-	print client.commit("848b351341922ce39becda978778724d5b58dbca")
+	print(client.commit("848b351341922ce39becda978778724d5b58dbca"))
