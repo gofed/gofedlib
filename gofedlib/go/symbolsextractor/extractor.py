@@ -260,7 +260,7 @@ class GoSymbolsExtractor(object):
 						raise ExtractionError("Error parsing %s: %s" % ("%s/%s" % (dir_info['dir'], go_file), output))
 				else:
 					#print go_file
-					go_file_json = json.loads(output)
+					go_file_json = json.loads(output.decode('utf-8'))
 
 				pname = go_file_json["pkgname"]
 
