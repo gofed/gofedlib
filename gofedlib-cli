@@ -57,7 +57,7 @@ def get_dependencies(packages, selection):
 
     for key in dependencies.keys():
         dependencies[key] = ippaths2providers(dependencies[key])
-        dependencies[key] = map(lambda l: 'https://%s' % l, dependencies[key])
+        dependencies[key] = list(map(lambda l: 'https://%s' % l, dependencies[key]))
 
     return dependencies
 

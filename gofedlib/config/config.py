@@ -1,4 +1,9 @@
-import ConfigParser
+try:
+        import ConfigParser as configparser
+except:
+        import configparser
+
+
 from gofedlib.utils import getScriptDir
 import os
 
@@ -17,6 +22,6 @@ class Config(object):
 		return getScriptDir(__file__)
 
 	def _parse(self, config_file):
-		self._config = ConfigParser.ConfigParser()
+		self._config = configparser.ConfigParser()
 		self._config.read(config_file)
 
