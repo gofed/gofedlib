@@ -1,0 +1,16 @@
+language: python
+python:
+  - "2.7"
+  - "3.4"
+# services: 
+#   - none
+install: # command to install dependencies
+  - "pip install -r requirements.txt"
+# command to run tests
+script: python setup.py test
+
+# notifications:
+#   email:
+#     - somelist@example.com
+
+sudo: false
