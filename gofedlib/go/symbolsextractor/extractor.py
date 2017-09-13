@@ -41,19 +41,19 @@ class GoSymbolsExtractor(object):
 
 		"""set implicit output"""
 		self.symbols = {}
-                self.symbols_position = {}
-                # list of packages imported for each project's package
-                self.package_imports = {}
-                # list of packages imported in entire project
-                self.imported_packages = []
-                # occurences of imported paths in packages
-                self.package_imports_occurence = {}
-                self.test_directories = []
-                self.test_directory_dependencies = {}
-                # main packages
-                self.main_packages = []
-                # main packages dependencies
-                self.main_package_deps = {}
+		self.symbols_position = {}
+		# list of packages imported for each project's package
+		self.package_imports = {}
+		# list of packages imported in entire project
+		self.imported_packages = []
+		# occurences of imported paths in packages
+		self.package_imports_occurence = {}
+		self.test_directories = []
+		self.test_directory_dependencies = {}
+		# main packages
+		self.main_packages = []
+		# main packages dependencies
+		self.main_package_deps = {}
 
 		"""set implicit states"""
 		self.input_validated = False
