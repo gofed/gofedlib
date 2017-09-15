@@ -1,5 +1,5 @@
 import os
-from lib.utils import runCommand
+from gofedlib.utils import runCommand
 
 class ContentMetadataExtractor(object):
 
