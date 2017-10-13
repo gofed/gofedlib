@@ -88,6 +88,9 @@ if __name__ == '__main__':
     result = {}
     project_package_info = None
 
+    # Remove trailing slashes on the input path
+    args.path = args.path.rstrip("/")
+
     if args.raw_project_packages:
         project_package_info = project_packages(args.path)
         result['raw-project-packages'] = project_package_info
