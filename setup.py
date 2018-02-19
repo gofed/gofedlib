@@ -49,7 +49,7 @@ def gofedlib_find_packages():
 
 setup(
     name='gofedlib',
-    version='0.1.0a2',
+    version='0.1.0',
     packages=gofedlib_find_packages(),
     scripts=['gofedlib-cli'],
     install_requires=get_requirements(),
