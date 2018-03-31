@@ -1,5 +1,8 @@
 import json
 import yaml
+from gofedlib.go.importpath.decomposerbuilder import ImportPathsDecomposerBuilder
+import datetime
+import pytz
 
 class Snapshot(object):
 
@@ -38,6 +41,31 @@ class Snapshot(object):
 			lines.append("%s %s" % (str(package), str(self._packages[package])))
 
 		return "\n".join(lines)
+
+	def Glide(self):
+		"""Return the snapshot in glide.lock form
+		"""
+		dict = {
+			"hash": "???",
+			"updated": str(datetime.datetime.now(tz=pytz.utc).isoformat()),
+			"imports": [],
+		}
+
+		decomposer = ImportPathsDecomposerBuilder().buildLocalDecomposer()
+		decomposer.decompose(self._packages.keys())
+		classes = decomposer.classes()
+
+		for ipp in classes:
+			dep = {
+				"name": ipp,
+				"version": str(self._packages[classes[ipp][0]])
+			}
+			if len(classes[ipp]) > 1 or classes[ipp][0] != ipp:
+				dep["subpackages"] = map(lambda l: l[len(ipp)+1:], classes[ipp])
+
+			dict["imports"].append(dep)
+
+		return yaml.dump(dict, default_flow_style=False)
 
 	def readGodepsFile(self, file):
 		with open(file, "r") as f:

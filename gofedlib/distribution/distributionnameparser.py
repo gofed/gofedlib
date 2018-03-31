@@ -40,7 +40,7 @@ class DistributionNameParser(object):
 		self._signature = None
 
 	def _parseFedora(self, name):
-		for regex in [r"Fedora\s*(\d\d?)", r"F(\d\d?)", r"Fedora:f?(\d\d?)", r"Fedora:(rawhide)"]:
+		for regex in [r"Fedora\s*(\d\d?)", r"F(\d\d?)", r"Fedora:(f\d\d?)", r"Fedora:(rawhide)"]:
 			groups = re.search(regex, name)
 			if groups:
 				return groups
@@ -62,4 +62,3 @@ class DistributionNameParser(object):
 			return self
 
 		raise ValueError("Distribution name '%s' not recognized" % name)
-

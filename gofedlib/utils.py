@@ -23,7 +23,7 @@ def runCommand(cmd):
 	process = Popen(cmd, stderr=PIPE, stdout=PIPE, shell=True)
 	stdout, stderr = process.communicate()
 	rt = process.returncode
-	
+
 	return stdout, stderr, rt
 
 def dateToTimestamp(date):
@@ -53,6 +53,39 @@ def intervalCovered(interval1, interval2):
 
 	return False
 
+def generateDateCoverage(since, to):
+    coverage = []
+
+    dt = datetime.datetime.fromtimestamp(since)
+    from_y = int(dt.strftime("%Y"))
+    from_m = int(dt.strftime("%m"))
+
+    todt = datetime.datetime.fromtimestamp(to)
+    to_y = int(todt.strftime("%Y"))
+    to_m = int(todt.strftime("%m"))
+
+    while True:
+        mprefix = ""
+        if from_m < 10:
+            mprefix = "0"
+        coverage.append("{}-{}{}".format(from_y, mprefix, from_m))
+        if from_y == to_y and from_m == to_m:
+            break
+
+        from_m += 1
+        if from_m > 12:
+            from_m = 1
+            from_y += 1
+
+    # Alter the to so it covers entire month
+    todt = datetime.datetime.fromtimestamp(to)
+    c_y = int(datetime.datetime.now().year)
+    c_m = int(datetime.datetime.now().month)
+    if todt.year >= c_y and todt.month >= c_m:
+        coverage[-1] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    return coverage
+
 def renderTemplate(searchpath, template_file, template_vars):
 
 	templateLoader = jinja2.FileSystemLoader( searchpath=searchpath )
@@ -61,4 +94,3 @@ def renderTemplate(searchpath, template_file, template_vars):
 	content = template.render( template_vars )
 
 	return content
-

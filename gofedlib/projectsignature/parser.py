@@ -25,7 +25,7 @@ class ProjectSignatureParser(object):
 			provider = ProviderBuilder().buildUpstreamWithLocalMapping()
 			signature = {
 				"provider_type": "upstream_repository",
-				"provider": provider.parse(match.group(1)).signature(),
+				"provider": provider.parse(match.group(1)),
 				"commit": ""
 			}
 			if match.group(3):
