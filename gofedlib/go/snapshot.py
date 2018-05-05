@@ -34,10 +34,13 @@ class Snapshot(object):
                     continue
 
                 try:
-                    if self._classes[prefix] != self._packages[package]:
-                        raise ValueError("Class {} posses two different commits: {}, {}".format(prefix, self._classes[prefix], self._packages[package]))
+                    if self._classes[prefix]["commit"] != self._packages[package]:
+                        raise ValueError("Class {} posses two different commits: {}, {}".format(prefix, self._classes[prefix][commit], self._packages[package]))
                 except KeyError:
-                    self._classes[prefix] = self._packages[package]
+                    self._classes[prefix] = {
+                        "ipprefix": prefix,
+                        "commit": self._packages[package],
+                    }
 
         return self._classes
 
