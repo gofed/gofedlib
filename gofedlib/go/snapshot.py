@@ -1,145 +1,165 @@
 import json
 import yaml
 from gofedlib.go.importpath.decomposerbuilder import ImportPathsDecomposerBuilder
+from gofedlib.go.importpath.parserbuilder import ImportPathParserBuilder
 import datetime
 import pytz
 
+
 class Snapshot(object):
 
-	def __init__(self):
-		self._packages = {}
+    def __init__(self):
+        self._packages = {}
+        self._classes = {}
 
-	def clear(self):
-		self._packages = {}
-		return self
+    def clear(self):
+        self._packages = {}
+        self._classes = {}
+        return self
 
-	def addPackage(self, package, commit):
-		self._packages[package] = commit
-		return self
+    def addPackage(self, package, commit):
+        self._packages[package] = commit
+        return self
 
-	def packages(self):
-		# TODO(jchaloup): introduce iterator instead
-		return self._packages
+    def packages(self):
+        # TODO(jchaloup): introduce iterator instead
+        return self._packages
 
-	def Godeps(self):
-		"""Return the snapshot in Godeps.json form
-		"""
-		dict = []
-		for package in sorted(self._packages.keys()):
-			dict.append({
-				"ImportPath": str(package),
-				"Rev": str(self._packages[package])
-			})
+    def classes(self):
+        if self._classes == {}:
+            ipparser = ImportPathParserBuilder().buildWithLocalMapping()
+            for package in self._packages:
+                prefix = ipparser.parse(package).prefix()
+                if ipparser.isNative():
+                    continue
 
-		return dict
+                try:
+                    if self._classes[prefix] != self._packages[package]:
+                        raise ValueError("Class {} posses two different commits: {}, {}".format(prefix, self._classes[prefix], self._packages[package]))
+                except KeyError:
+                    self._classes[prefix] = self._packages[package]
 
-	def GLOGFILE(self):
-		"""Return the snapshot in GLOGFILE form
-		"""
-		lines = []
-		for package in sorted(self._packages.keys()):
-			lines.append("%s %s" % (str(package), str(self._packages[package])))
+        return self._classes
 
-		return "\n".join(lines)
+    def Godeps(self):
+        """Return the snapshot in Godeps.json form
+        """
+        dict = []
+        for package in sorted(self._packages.keys()):
+            dict.append({
+                "ImportPath": str(package),
+                "Rev": str(self._packages[package])
+            })
 
-	def Glide(self):
-		"""Return the snapshot in glide.lock form
-		"""
-		dict = {
-			"hash": "???",
-			"updated": str(datetime.datetime.now(tz=pytz.utc).isoformat()),
-			"imports": [],
-		}
+        return dict
 
-		decomposer = ImportPathsDecomposerBuilder().buildLocalDecomposer()
-		decomposer.decompose(self._packages.keys())
-		classes = decomposer.classes()
+    def GLOGFILE(self):
+        """Return the snapshot in GLOGFILE form
+        """
+        lines = []
+        for package in sorted(self._packages.keys()):
+            lines.append("%s %s" % (str(package), str(self._packages[package])))
 
-		for ipp in classes:
-			dep = {
-				"name": ipp,
-				"version": str(self._packages[classes[ipp][0]])
-			}
-			if len(classes[ipp]) > 1 or classes[ipp][0] != ipp:
-				dep["subpackages"] = map(lambda l: l[len(ipp)+1:], classes[ipp])
+        return "\n".join(lines)
 
-			dict["imports"].append(dep)
+    def Glide(self):
+        """Return the snapshot in glide.lock form
+        """
+        dict = {
+            "hash": "???",
+            "updated": str(datetime.datetime.now(tz=pytz.utc).isoformat()),
+            "imports": [],
+        }
 
-		return yaml.dump(dict, default_flow_style=False)
+        decomposer = ImportPathsDecomposerBuilder().buildLocalDecomposer()
+        decomposer.decompose(self._packages.keys())
+        classes = decomposer.classes()
 
-	def readGodepsFile(self, file):
-		with open(file, "r") as f:
-			data = json.load(f)
+        for ipp in classes:
+            dep = {
+                "name": ipp,
+                "version": str(self._packages[classes[ipp][0]])
+            }
+            if len(classes[ipp]) > 1 or classes[ipp][0] != ipp:
+                dep["subpackages"] = map(lambda l: l[len(ipp)+1:], classes[ipp])
 
-		# Deps key?
-		if "Deps" not in data:
-			raise ValueError("Deps key missing in %s" % file)
+            dict["imports"].append(dep)
 
-		packages = {}
-		for package in data["Deps"]:
-			if "ImportPath" not in package:
-				raise ValueError("ImportPath key missing in %s" % file)
+        return yaml.dump(dict, default_flow_style=False)
 
-			if "Rev" not in package:
-				raise ValueError("Rev key missing in %s" % file)
+    def readGodepsFile(self, file):
+        with open(file, "r") as f:
+            data = json.load(f)
 
-			packages[package["ImportPath"]] = package["Rev"]
+        # Deps key?
+        if "Deps" not in data:
+            raise ValueError("Deps key missing in %s" % file)
 
-		# The file is valid Godeps.json file
-		self.clear()
-		self._packages = packages
+        packages = {}
+        for package in data["Deps"]:
+            if "ImportPath" not in package:
+                raise ValueError("ImportPath key missing in %s" % file)
 
-		return self
+            if "Rev" not in package:
+                raise ValueError("Rev key missing in %s" % file)
 
-	def readGLOGFILE(self, file):
-		raise NotImplementedError()
-		with open(file, "r") as f:
-			data = json.load(f)
+            packages[package["ImportPath"]] = package["Rev"]
 
-	def readGlideLockFile(self, file):
-		with open(file, "r") as f:
-			data = yaml.load(f)
+        # The file is valid Godeps.json file
+        self.clear()
+        self._packages = packages
 
-		if "imports" in data:
-			imported_pkgs = data["imports"]
-		else:
-			raise ValueError("imports key missing in %s" % file)
+        return self
 
-		packages = {}
-		for package in imported_pkgs:
-			for key in ["name", "version"]:
-				if key not in package:
-					raise ValueError("package key missing in import array item in %s" % file)
+    def readGLOGFILE(self, file):
+        raise NotImplementedError()
+        with open(file, "r") as f:
+            data = json.load(f)
 
-			if "subpackages" in package:
-				for subpkg in package["subpackages"]:
-					packages["%s/%s" % (package["name"], subpkg)] = package["version"]
-			else:
-				packages[package["name"]] = package["version"]
+    def readGlideLockFile(self, file):
+        with open(file, "r") as f:
+            data = yaml.load(f)
 
-		self.clear()
-		self._packages = packages
+        if "imports" in data:
+            imported_pkgs = data["imports"]
+        else:
+            raise ValueError("imports key missing in %s" % file)
 
-		return self
+        packages = {}
+        for package in imported_pkgs:
+            for key in ["name", "version"]:
+                if key not in package:
+                    raise ValueError("package key missing in import array item in %s" % file)
 
-        def readVendorFile (self, file):
-            with open(file,"r") as f:
-                data = json.load(f)
+            if "subpackages" in package:
+                for subpkg in package["subpackages"]:
+                    packages["%s/%s" % (package["name"], subpkg)] = package["version"]
+            else:
+                packages[package["name"]] = package["version"]
 
-            if "package" not in data:
-                raise ValueError("package key missing in %s" % file)
+        self.clear()
+        self._packages = packages
 
-            packages = {}
+        return self
 
-            for package in data["package"]:
-                if "path" not in package:
-                    raise ValueError("Import path missing in %s" % file)
-                if "revision" not in package:
-                    raise ValueError("Revision missing in %s" % file)
+    def readVendorFile (self, file):
+        with open(file,"r") as f:
+            data = json.load(f)
 
-                packages[package["path"]] = package["revision"]
+        if "package" not in data:
+            raise ValueError("package key missing in %s" % file)
 
-            self.clear()
-            self._packages = packages
+        packages = {}
 
-            return self
+        for package in data["package"]:
+            if "path" not in package:
+                raise ValueError("Import path missing in %s" % file)
+            if "revision" not in package:
+                raise ValueError("Revision missing in %s" % file)
+
+            packages[package["path"]] = package["revision"]
+
+        self.clear()
+        self._packages = packages
+
+        return self

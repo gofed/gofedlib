@@ -10,4 +10,3 @@ class ImportPathsDecomposerBuilder(object):
 	def buildRemoteDecomposer(self):
 		ipparser = ImportPathParserBuilder().buildWithRemoteMapping()
 		return ImportPathsDecomposer(ipparser)
-

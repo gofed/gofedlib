@@ -7,6 +7,7 @@
 "^(gopkg\\.in/fatih/pool\\.v\\d)(/(.*))?",
 "^(gopkg\\.in/olivere/elastic\\.v\\d)(/(.*))?",
 "^(gopkg\\.in/natefinch/lumberjack\\.v\\d)(/(.*))?",
+"^(gopkg\\.in/cheggaaa/pb\\.v\\d)(/(.*))?",
 "^(gopkg\\.in/v\\d/[^/]+)(/(.*))?",
 "^(gopkg\\.in/[^/]+\\.v\\d)(/(.*))?",
 "^(bazil\\.org/fuse)(/(.*))?",
@@ -16,4 +17,3 @@
 "^(launchpad\\.net/gocheck)(/(.*))?",
 "^(speter\\.net/go/exp/math/dec/inf)(/(.*))?"
 ]
-
