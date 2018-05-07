@@ -28,6 +28,7 @@ class ApiExtractor(object):
             "--package-path {}".format(self._package_path),
             "--package-prefix {}:{}".format(self._package_path, self._hexsha),
             "--symbol-table-dir {}".format(self._generated),
+            "--library",
         ]
 
         if self._cgo != "":
@@ -40,7 +41,7 @@ class ApiExtractor(object):
         else:
             raise ValueError("Dependency file {} not recognized".format(self._depsfile))
 
-        self._so, se, rc = runCommand("goextract {}".format(" ".join(options)))
+        self._so, se, rc = runCommand("GOPATH={} goextract {}".format(self._gopath, " ".join(options)))
         if rc != 0:
             raise ExtractionException("goextract({}): {}".format(rc, se))
 
