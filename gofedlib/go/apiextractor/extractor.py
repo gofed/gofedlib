@@ -6,7 +6,7 @@ class ExtractionException(Exception):
 
 class ApiExtractor(object):
 
-    def __init__(self, gopath, generated, package_path, hexsha, depsfile, cgodir = ""):
+    def __init__(self, gopath, generated, package_path, hexsha, depsfile, goversion, cgodir = ""):
         # GOPATH/src directory containing all required dependencies
         self._gopath = gopath
         # Go stlib and preloaded artefacts
@@ -18,6 +18,8 @@ class ApiExtractor(object):
         self._hexsha = hexsha
         # Dependency snapshot
         self._depsfile = depsfile
+        # Go version
+        self._goversion = goversion
 
         self._so = ""
 
@@ -28,6 +30,7 @@ class ApiExtractor(object):
             "--package-path {}".format(self._package_path),
             "--package-prefix {}:{}".format(self._package_path, self._hexsha),
             "--symbol-table-dir {}".format(self._generated),
+            "--goversion {}".format(self._goversion),
             "--library",
         ]
 
