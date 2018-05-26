@@ -129,16 +129,17 @@ class Snapshot(object):
             raise ValueError("imports key missing in %s" % file)
 
         packages = {}
-        for package in imported_pkgs:
-            for key in ["name", "version"]:
-                if key not in package:
-                    raise ValueError("package key missing in import array item in %s" % file)
+        if imported_pkgs:
+            for package in imported_pkgs:
+                for key in ["name", "version"]:
+                    if key not in package:
+                        raise ValueError("package key missing in import array item in %s" % file)
 
-            if "subpackages" in package:
-                for subpkg in package["subpackages"]:
-                    packages["%s/%s" % (package["name"], subpkg)] = package["version"]
-            else:
-                packages[package["name"]] = package["version"]
+                if "subpackages" in package:
+                    for subpkg in package["subpackages"]:
+                        packages["%s/%s" % (package["name"], subpkg)] = package["version"]
+                else:
+                    packages[package["name"]] = package["version"]
 
         self.clear()
         self._packages = packages
