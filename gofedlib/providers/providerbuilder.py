@@ -1,7 +1,7 @@
 from .upstreamprovider import UpstreamProvider
 import os
 import json
-from lib.utils import getScriptDir
+from gofedlib.utils import getScriptDir
 
 class ProviderBuilder(object):
 

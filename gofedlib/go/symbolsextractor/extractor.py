@@ -1,10 +1,10 @@
 import os
 import logging
 import json
-from lib.utils import getScriptDir, runCommand
+from gofedlib.utils import getScriptDir, runCommand
 from .coder import GoTypeCoder
 from ..contentmetadataextractor import ContentMetadataExtractor
-from lib.types import ExtractionError
+from gofedlib.types import ExtractionError
 
 class GoSymbolsExtractor(object):
 	"""
@@ -295,7 +295,8 @@ class GoSymbolsExtractor(object):
 					if dir_key not in test_directory_dependencies:
 						test_directory_dependencies[dir_key] = []
 
-					test_directory_dependencies[dir_key] = test_directory_dependencies[dir_key] + map(lambda p: str(p["path"]), go_file_json["imports"])
+					import_paths = [str(p["path"]) for p in go_file_json["imports"]]
+					test_directory_dependencies[dir_key] = test_directory_dependencies[dir_key] + import_paths
 					test_directories.append(dir_info['dir'])
 					continue
 
@@ -325,7 +326,7 @@ class GoSymbolsExtractor(object):
 				# build can contain two different prefixes
 				# but with the same package name.
 				prefix = dir_info["dir"] + ":" + pkg_name
-				i_paths = map(lambda i: i["path"], go_file_json["imports"])
+				i_paths = [i["path"] for i in go_file_json["imports"]]
 				if prefix not in jsons:
 					jsons[prefix] = [go_file_json]
 					package_imports[prefix] = i_paths
